@@ -1,0 +1,19 @@
+.text
+000 LOAD MQ,M(080)     ; MUL(094)          # AC = x[i]*y[i]
+001 LOAD MQ            ; ADD(a00)          # AC = count + AC
+002 STOR M(a00)        ; JUMP(003, 0:19)   # grava o somador
+003 LOAD M(a03)        ; ADD(a02)          # incrementa a posição no vetor x
+004 STOR M(000, 8:19)  ; STOR M(a03)       # grava a nova posição do vetor x
+005 LOAD M(a04)        ; ADD(a02)          # incrementa a posição no vetor y
+006 STOR M(000, 28:39) ; STOR M(a04)       # grava a nova posição do vetor y
+007 LOAD M(a01)        ; SUB(a02)          # decremento contador
+008 STOR M(a01)        ; JUMP+M(000, 0:19) # volta para inicio do laço
+009 LOAD M(a00)        ; JUMP M(400,0:19)  # fim
+
+
+.data
+a00 0000000000 # inicio do somador do produto escalar
+a01 0000000013 # contador para as repetições do laço
+a02 0000000001 # 1 constante para decrementar o contador
+a03 0000000080 # posição inicial do vetor x
+a04 0000000094 # posição inicial do vetor y

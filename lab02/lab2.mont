@@ -1,0 +1,14 @@
+.text
+000 LOAD MQ,M(300); MUL M(a02)        
+001 LOAD MQ       ; STOR M(b00)        #b00 = alcance*g
+002 RSH           ; STOR M(b01)	       #b01 = x
+003 LOAD M(b00)   ; DIV M(b01)         #MQ  = alcance*g/x[anterior]
+004 LOAD MQ       ; ADD M(b01)	       #AC  = x[anterior] + alcance*g/x[anterior]
+005 RSH           ; STOR M(b01)	       #b01 = (x[anterior] + alcance*g/x[anterior]) / 2
+006 LOAD M(a00)   ; SUB M(a01)         #decrementa o contador
+007 STOR M(a00)   ; JUMP+M(003,0:19)   #volta para o inicio do laço
+008 LOAD M(b01)   ; JUMP M(400,0:19)   #fim
+.data
+a00 0000000009 #contador do laço
+a01 0000000001 #constante 1
+a02 000000000a #constante 10
