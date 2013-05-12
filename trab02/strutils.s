@@ -40,15 +40,16 @@ my_atoi:
     mov r3, #10
 
 my_atoi_head:
-    @ adiciono o mais significativo corrente e aponto para próximo digito
-    mul r0, r3
     ldrb r2, [r1], #1
+    cmp r2, #0
+    beq my_atoi_tail
+    @adiciona o mais significativo à r0
+    mul r0, r3
     sub r2, r2, #48
     add r0, r2
-    @ verifico se atingi o final da string
-    cmp r2, #-48
-    bne my_atoi_head
+    b my_atoi_head
 
+my_atoi_tail:
     pop {pc}
 
 @ Converte um inteiro para uma cadeia de caracteres com dígitos decimais
