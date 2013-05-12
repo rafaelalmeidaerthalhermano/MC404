@@ -45,9 +45,9 @@ my_atoi_head:
     ldrb r2, [r1], #1
     sub r2, r2, #48
     add r0, r2
-    @ verifico se atingi o inicio da string
-    @cmp r1, r2
-    @bne my_atoi_head
+    @ verifico se atingi o final da string
+    cmp r2, #-48
+    bne my_atoi_head
 
     pop {pc}
 
