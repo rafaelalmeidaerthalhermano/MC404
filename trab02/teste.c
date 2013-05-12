@@ -7,7 +7,7 @@
  */
 #include <stdio.h>
 
-extern int my_strcmp(char *str, char *str);
+extern int my_strcmp(char *, char *);
 
 int main(int argc, char *argv[]) {
 
