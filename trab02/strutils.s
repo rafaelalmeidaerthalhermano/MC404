@@ -23,7 +23,35 @@
 @
 my_ahtoi:
     push {lr}
+    push {r4}
 
+    mov r1, r0
+    mov r0, #0
+    mov r3, #10
+
+my_ahtoi_head:
+    @ verifico se atingi o final da string
+    ldrb r2, [r1], #1
+    cmp r2, #0
+    beq my_ahtoi_tail
+
+    @ verifico se o caracter esta em [0,9]
+    cmp r2, #48
+    subge r4, r2, #48
+    @ verifico se o caracter esta em [A,F]
+    cmp r2, #65
+    subgt r4, r2, #55
+    @ verifico se o caracter esta em [a,f]
+    cmp r2, #97
+    subge r4, r2, #87
+
+    @ adiciona o mais significativo à r0
+    mul r0, r3
+    add r0, r4
+    b my_ahtoi_head
+
+my_ahtoi_tail:
+    pop {r4}
     pop {pc}
 
 @ Converte uma cadeia de caracteres com dígitos decimais terminada em zero para
@@ -37,13 +65,15 @@ my_atoi:
 
     mov r1, r0
     mov r0, #0
-    mov r3, #10
+    mov r3, #16
 
 my_atoi_head:
+    @ verifico se atingi o final da string
     ldrb r2, [r1], #1
     cmp r2, #0
     beq my_atoi_tail
-    @adiciona o mais significativo à r0
+
+    @ adiciona o mais significativo à r0
     mul r0, r3
     sub r2, r2, #48
     add r0, r2
