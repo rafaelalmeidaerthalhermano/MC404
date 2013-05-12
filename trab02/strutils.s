@@ -34,7 +34,31 @@ my_ahtoi:
 @
 my_atoi:
     push {lr}
+    push {r4}
 
+    @ pego o final da string
+    mov r4, r0
+    bl my_strlen
+    @ posiciono o ponteiro para o final da string
+    mov r1, r4      @ r1 := inicio da string
+    add r2, r1, r0  @ r2 := final da string
+
+    @ inicializo r0
+    mov r0, #0
+    mov r4, #10
+
+my_atoi_head:
+    @ leio o final da string e decremento o contador
+    ldrb r3, [r2], #-1
+    @ insiro o digito
+    sub r3, r3, #48
+    mul r0, r4
+    add r0, r3
+    @ verifico se atingi o inicio da string
+    cmp r1, r2
+    bne my_atoi_head
+
+    pop {r4}
     pop {pc}
 
 @ Converte um inteiro para uma cadeia de caracteres com dígitos decimais
@@ -68,7 +92,6 @@ my_itoah:
 @
 my_strcmp:
     push {lr}
-    push {r3}
     push {r4}
 
     mov r3, r1
@@ -84,18 +107,18 @@ my_strcmp_head:
     beq my_strcmp_tail 
     cmp r2, #0
     beq my_strcmp_tail 
-    
+
     @ verifico se as strings continuam sendo iguais
     cmp r1, r2
     beq my_strcmp_head
 
 my_strcmp_tail:
+    @ monto a saida
     cmp r1, r2
     moveq r0, #0
     movgt r0, #1
     movlt r0, #-1
 
-    pop {r3}
     pop {r4}
     pop {pc}
 
@@ -116,4 +139,3 @@ my_strlen_head:
     sub r0, r0, #0x1
 
     pop {pc}
-
