@@ -55,8 +55,8 @@ my_atoi_head:
     mul r0, r4
     add r0, r3
     @ verifico se atingi o inicio da string
-    cmp r1, r2
-    bne my_atoi_head
+    @cmp r1, r2
+    @bne my_atoi_head
 
     pop {r4}
     pop {pc}
