@@ -34,31 +34,21 @@ my_ahtoi:
 @
 my_atoi:
     push {lr}
-    push {r4}
 
-    @ pego o final da string
-    mov r4, r0
-    bl my_strlen
-    @ posiciono o ponteiro para o final da string
-    mov r1, r4      @ r1 := inicio da string
-    add r2, r1, r0  @ r2 := final da string
-
-    @ inicializo r0
+    mov r1, r0
     mov r0, #0
-    mov r4, #10
+    mov r3, #10
 
 my_atoi_head:
-    @ leio o final da string e decremento o contador
-    ldrb r3, [r2], #-1
-    @ insiro o digito
-    sub r3, r3, #48
-    mul r0, r4
-    add r0, r3
+    @ adiciono o mais significativo corrente e aponto para próximo digito
+    mul r0, r3
+    ldrb r2, [r1], #1
+    sub r2, r2, #48
+    add r0, r2
     @ verifico se atingi o inicio da string
     @cmp r1, r2
     @bne my_atoi_head
 
-    pop {r4}
     pop {pc}
 
 @ Converte um inteiro para uma cadeia de caracteres com dígitos decimais
