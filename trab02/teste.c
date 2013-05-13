@@ -7,13 +7,18 @@
  */
 #include <stdio.h>
 
-extern int my_div(char *, char *);
+extern int my_div(int, int);
 
 int main(int argc, char *argv[]) {
 
-	int res = my_div(argv[1], argv[2]);
+	int a,b;
 
-	printf("my_div(%d, %d) = %d\n", argv[1], argv[2], res);
+	sscanf(argv[1], "%d", &a);
+	sscanf(argv[2], "%d", &b);
+
+	int res = my_div(a, b);
+
+	printf("my_div(%d, %d) = %d\n", a, b, res);
 
 	return 0;	
 }
