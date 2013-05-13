@@ -12,7 +12,7 @@ extern void my_itoa(int, char *);
 int main(int argc, char *argv[]) {
 
 	int a;
-	char *b;
+	char b [10];
 
 	sscanf(argv[1], "%d", &a);
 
