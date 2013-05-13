@@ -7,18 +7,18 @@
  */
 #include <stdio.h>
 
-extern int my_div(int, int);
+extern void my_itoa(int, char *);
 
 int main(int argc, char *argv[]) {
 
-	int a,b;
+	int a;
+	char *b;
 
 	sscanf(argv[1], "%d", &a);
-	sscanf(argv[2], "%d", &b);
 
-	int res = my_div(a, b);
+	my_itoa(a, b);
 
-	printf("my_div(%d, %d) = %d\n", a, b, res);
+	printf("my_itoa(%d) = %s\n", a, b);
 
 	return 0;	
 }

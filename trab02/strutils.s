@@ -5,7 +5,6 @@
 @ aluno : Rafael Almeida Erthal Hermano
 @ ra    : 121286
 @
-.globl my_div
 .globl my_ahtoi
 .globl my_atoi
 .globl my_itoa
@@ -114,7 +113,36 @@ my_atoi_tail:
 @
 my_itoa:
     push {lr}
+    push {r4}
 
+    mov r4, r1
+
+    @ insiro na pilha o marcador de final da string
+    mov r3, #0
+    push {r3}
+
+my_itoa_split:
+    @ calculo o digito menos significativo corrente
+    mov r1, #10
+    bl my_div
+
+    @ insiro o digito corrente na pilha
+    add r2, r1, #48
+    push {r2}
+
+    @ verifico se terminei a conversao
+    cmp r0, #0
+    bge my_itoa_split
+
+my_itoa_print:
+    @ removo o digito da pilha
+    pop {r0}
+    str r0, [r4], #1
+    cmp r0, #0
+    bne my_itoa_print
+
+my_itoa_tail:
+    pop {r4}
     pop {pc}
 
 @ Converte um inteiro para uma cadeia de caracteres com dígitos hexadecimais
