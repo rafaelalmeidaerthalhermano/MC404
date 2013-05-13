@@ -163,7 +163,7 @@ my_itoah:
 
 my_itoah_split:
     @ calculo o digito menos significativo corrente
-    mov r1, #10
+    mov r1, #16
     bl my_div
 
     @ insiro o digito corrente na pilha
