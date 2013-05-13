@@ -12,6 +12,10 @@
 .globl my_strcmp
 .globl my_strlen
 
+@temporarios para teste
+.extern printf
+aqui : .asciz "aqui\n"
+
 .text
 .align 4
 
@@ -133,6 +137,9 @@ my_itoa_split:
     @ verifico se terminei a conversao
     cmp r0, #0
     bge my_itoa_split
+
+ldr r0, =aqui
+bl printf
 
 my_itoa_print:
     @ removo o digito da pilha
