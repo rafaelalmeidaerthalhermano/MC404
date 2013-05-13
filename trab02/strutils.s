@@ -5,6 +5,7 @@
 @ aluno : Rafael Almeida Erthal Hermano
 @ ra    : 121286
 @
+.globl my_div
 .globl my_ahtoi
 .globl my_atoi
 .globl my_itoa
@@ -14,6 +15,29 @@
 
 .text
 .align 4
+
+@ Divide um inteiro por outro retornando o valor da divisão e o resto
+@
+@ entrada   : {r0: dividendo, r1: divisor}
+@ saida     : {r0: quociente, r1 : resto}
+@
+my_div:
+    push {lr}
+
+    mov r2, r1
+    mov r1, r0
+    mov r0, #0
+
+my_div_head:
+    cmp r1, r2
+    blt my_div_tail
+
+    sub r1, r1, r2
+    add r0, r0, #1
+    b my_div_head
+
+my_div_tail:
+    pop {pc}
 
 @ Converte uma cadeia de caracteres com dígitos hexadecimais terminada em zero
 @ para um inteiro de 32 bits.
