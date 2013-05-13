@@ -7,10 +7,16 @@
  */
 #include <stdio.h>
 
-extern void my_itoah(int, char *);
+//extern void my_itoah(int, char *);
+
+extern int my_atoi(char *);
 
 int main(int argc, char *argv[]) {
 
+	int result = my_atoi(argv[1]);
+
+	printf("my_atoi(%s) = %d\n", argv[1], result);
+/*
 	int a;
 	char b [10];
 
@@ -21,4 +27,5 @@ int main(int argc, char *argv[]) {
 	printf("my_itoah(%d) = %s\n", a, b);
 
 	return 0;	
+*/
 }

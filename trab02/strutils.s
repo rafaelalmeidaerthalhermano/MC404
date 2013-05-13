@@ -85,10 +85,17 @@ my_ahtoi_tail:
 @
 my_atoi:
     push {lr}
+    push {r4}
 
     mov r1, r0
     mov r0, #0
     mov r3, #10
+
+@ verifico se a entrada é negativo
+    ldrb r2, [r1]
+    mov r4, #1
+    cmp r2, #45
+    moveq r4, #0
 
 my_atoi_head:
     @ verifico se atingi o final da string
@@ -103,6 +110,12 @@ my_atoi_head:
     b my_atoi_head
 
 my_atoi_tail:
+    @ verifico se a entrada era negativa
+    cmp r4, #1
+    mov r4, #-1
+    muleq r0, r0, r4
+
+    pop {r4}
     pop {pc}
 
 @ Converte um inteiro para uma cadeia de caracteres com dígitos decimais
