@@ -135,12 +135,11 @@ my_itoa:
     push {r3}
 
     @ verifico se é negativo
+    mov r3, #0
     cmp r0, #0
-    mov r3, #45
-    pushlt {r3}
-    mov r3, #-1
+    movlt r3, #-1
     mullt r1, r0, r3
-    movrt r0, r1
+    movlt r0, r1
 
 my_itoa_split:
     @ calculo o digito menos significativo corrente
@@ -154,6 +153,11 @@ my_itoa_split:
     @ verifico se terminei a conversao
     cmp r0, #0
     bgt my_itoa_split
+
+    @ verifico se a entrada era negtiva
+    cmp r3, #-1
+    moveq r3, #45
+    pusheq {r3}
 
 my_itoa_print:
     @ removo o digito da pilha
