@@ -144,7 +144,7 @@ bl printf
 my_itoa_print:
     @ removo o digito da pilha
     pop {r0}
-    str r0, [r4], #1
+    strb r0, [r4], #1
     cmp r0, #0
     bne my_itoa_print
 
