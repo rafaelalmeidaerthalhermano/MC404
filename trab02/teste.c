@@ -7,7 +7,7 @@
  */
 #include <stdio.h>
 
-extern void my_itoa(int, char *);
+extern void my_itoah(int, char *);
 
 int main(int argc, char *argv[]) {
 
@@ -16,9 +16,9 @@ int main(int argc, char *argv[]) {
 
 	sscanf(argv[1], "%d", &a);
 
-	my_itoa(a, b);
+	my_itoah(a, b);
 
-	printf("my_itoa(%d) = %s\n", a, b);
+	printf("my_itoah(%d) = %s\n", a, b);
 
 	return 0;	
 }

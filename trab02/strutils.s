@@ -153,7 +153,38 @@ my_itoa_tail:
 @
 my_itoah:
     push {lr}
+    push {r4}
 
+    mov r4, r1
+
+    @ insiro na pilha o marcador de final da string
+    mov r3, #0
+    push {r3}
+
+my_itoah_split:
+    @ calculo o digito menos significativo corrente
+    mov r1, #10
+    bl my_div
+
+    @ insiro o digito corrente na pilha
+    cmp r1, #9
+    addls r2, r1, #48
+    addhi r2, r1, #55
+    push {r2}
+
+    @ verifico se terminei a conversao
+    cmp r0, #0
+    bgt my_itoah_split
+
+my_itoah_print:
+    @ removo o digito da pilha
+    pop {r0}
+    strb r0, [r4], #1
+    cmp r0, #0
+    bne my_itoah_print
+
+my_itoah_tail:
+    pop {r4}
     pop {pc}
 
 @ Compara as duas cadeias de caracteres apontadas por s1 e s2. Retorna 0 se
