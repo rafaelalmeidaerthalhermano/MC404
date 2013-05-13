@@ -134,6 +134,14 @@ my_itoa:
     mov r3, #0
     push {r3}
 
+    @ verifico se é negativo
+    cmp r0, #0
+    mov r3, #45
+    pushlt {r3}
+    mov r3, #-1
+    mullt r1, r0, r3
+    movrt r0, r1
+
 my_itoa_split:
     @ calculo o digito menos significativo corrente
     mov r1, #10
