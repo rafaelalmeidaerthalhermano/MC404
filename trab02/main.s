@@ -23,6 +23,7 @@
     ac_message : .asciz "AC: 0x"
     mq_message : .asciz "MQ: 0x"
     pc_message : .asciz "PC: 0x"
+    new_line   : .asciz "\n"
 
     str_address: .space 100
 
@@ -118,6 +119,8 @@ cmd_regs:
 
     ldr r0, =str_address
     bl put_str
+    ldr r0, =new_line
+    bl put_str
 
     @ imprime MQ
     ldr r0, =mq_message
@@ -130,6 +133,8 @@ cmd_regs:
 
     ldr r0, =str_address
     bl put_str
+    ldr r0, =new_line
+    bl put_str
 
     @ imprime PC 
     ldr r0, =pc_message
@@ -141,6 +146,8 @@ cmd_regs:
     bl my_itoah
 
     ldr r0, =str_address
+    bl put_str
+    ldr r0, =new_line
     bl put_str
 
     pop {pc}
