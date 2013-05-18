@@ -174,7 +174,7 @@ my_itoa_tail:
 @ representando o inteiro. A cadeia deve ser preenchina na memória a partir do
 @ endereço fornecido em buf e deve ser terminada com zero.
 @
-@ entrada   : {r0: endereco da string, r1: endereco da string de saida}
+@ entrada   : {r0: valor do inteiro, r1: endereco da string de saida}
 @
 my_itoah:
     push {lr}

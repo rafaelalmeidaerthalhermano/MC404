@@ -4,11 +4,14 @@
 @ aluno : Rafael Almeida Erthal Hermano
 @ ra    : 121286
 @
+.extern my_itoah
 .extern get_cmd
+
 .extern IAS_MEM
 .extern PC
 .extern AC
 .extern MQ
+
 .extern printf
 
 .globl main
@@ -20,7 +23,8 @@
     mq_message : .asciz "MQ: 0x"
     pc_message : .asciz "PC: 0x"
 
-    temp : .asciz "%d\n"
+    str_address: .space 100
+    temp : .asciz "%s\n"
 
 .text
 .align 4
@@ -106,25 +110,13 @@ cmd_regs:
     ldr r0, =ac_message
     bl printf
 
-    ldr r0, =temp
-    ldr r1, =AC
-    ldr r1, [r1]
-    bl printf
-
-    ldr r0, =mq_message
-    bl printf
+    ldr r0, =AC
+    ldr r0, [r0]
+    ldr r1, =str_address
+    bl my_itoah
 
     ldr r0, =temp
-    ldr r1, =MQ
-    ldr r1, [r1]
-    bl printf
-
-    ldr r0, =pc_message
-    bl printf
-
-    ldr r0, =temp
-    ldr r1, =PC
-    ldr r1, [r1]
+    ldr r1, =str_address
     bl printf
 
     pop {pc}
