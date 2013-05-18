@@ -107,10 +107,37 @@ cmd_p:
 cmd_regs:
     push {lr}
 
+    @ imprime AC 
     ldr r0, =ac_message
     bl printf
 
     ldr r0, =AC
+    ldr r0, [r0]
+    ldr r1, =str_address
+    bl my_itoah
+
+    ldr r0, =temp
+    ldr r1, =str_address
+    bl printf
+
+    @ imprime MQ
+    ldr r0, =mq_message
+    bl printf
+
+    ldr r0, =MQ
+    ldr r0, [r0]
+    ldr r1, =str_address
+    bl my_itoah
+
+    ldr r0, =temp
+    ldr r1, =str_address
+    bl printf
+
+    @ imprime PC 
+    ldr r0, =pc_message
+    bl printf
+
+    ldr r0, =PC
     ldr r0, [r0]
     ldr r1, =str_address
     bl my_itoah
