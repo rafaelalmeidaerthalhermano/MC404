@@ -1,10 +1,10 @@
-@ MC404 - Projeto 2 (parte 1)
+@ MC404 - Projeto 2 (parte 2)
 @ Função para leitura de comandos do simulador
 @
 @ aluno : Rafael Almeida Erthal Hermano
 @ ra    : 121286
 @
-.extern my_strcmp
+.extern get_str
 .globl get_cmd
 
 .data
@@ -16,99 +16,10 @@
     str_p      : .asciz "p"
     str_regs   : .asciz "regs"
 
-    chr_address: .space 1
     str_address: .space 100
 
 .text
 .align 4
-
-@ Coloca no endereco apontado por r0 o ultimo caracter lido na
-@ entrada padrao e retorna em r0 o status
-@
-@ entrada   : {r0: endereco do caracter que sera lido}
-@ saida     : {r0: status[#1:lido, #0:nao lido]}
-@
-get_chr:
-    push {lr}
-    push {r7}
-
-    mov r1, r0
-    mov r0, #0x0
-    mov r2, #0x1
-    mov r7, #0x3
-    svc 0
-
-    pop {r7}
-    pop {pc}
-
-@ Coloca no endereço apontado por r0 a string lida pela entrada padrão
-@ e retorna o número de caracteres lidos
-@
-@ entrada   : {r0: endereco do buffer aonde será inserida a string}
-@ saida     : {r0: numero de caracteres lidos}
-@
-get_str:
-    push {lr}
-    push {r4}
-
-    mov r4, r0
-
-get_str_ignore:
-    @ignora os caracteres em branco \n e \s
-    ldr r0, =chr_address
-    bl get_chr
-
-    @ verifique se algum digito foi lido
-    cmp r0, #0
-    beq get_str_tail
-
-    @ carregue o caracter lido
-    ldr r0, =chr_address
-    ldrb r0, [r0]
-
-    @ compare se foi digitado apenas uma nova linha
-    cmp r0, #10
-    beq get_str_ignore
-
-    @ compare se apenas espacos em branco foram digitados
-    cmp r0, #32
-    beq get_str_ignore
-
-get_str_head:
-    @leio as caracteres validos ate um espaco em branco ou nova linha
-    mov r1, r4
-    strb r0, [r4]
-    add r4, r4, #1
-
-    ldr r0, =chr_address
-    bl get_chr
-    
-    @verifique se algum digito foi lido
-    cmp r0, #0
-    beq get_str_tail
-
-    @carregue o caracter lido
-    ldr r0, =chr_address
-    ldrb r0, [r0]
-
-    @ compare se foi digitado uma nova linha
-    cmp r0, #10
-    beq get_str_tail
-
-    @ compare se foi digitado espaco em branco
-    cmp r0, #32
-    beq get_str_tail
-
-    b get_str_head
-
-get_str_tail:
-    mov r0, #0
-    mov r1, r4
-    strb r0, [r4]
-    mov r0, r4
-
-    pop {r4}
-    pop {pc}
 
 @ Retorna o código da operação lida pela entrada padrão e os parâmetros da operação
 @
