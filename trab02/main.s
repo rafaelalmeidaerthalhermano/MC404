@@ -13,8 +13,6 @@
 .extern AC
 .extern MQ
 
-.extern printf
-
 .globl main
 
 .data
@@ -93,7 +91,45 @@ cmd_sn_tail:
 @
 cmd_stw:
     push {lr}
+    push {r4}
 
+    @ leio o primeiro parametro
+    ldr r0, =opt1
+    ldrb r1, [r0, #1]
+    cmp r1, #120
+    moveq r1, #88
+    cmp r1, #88
+ 
+    addeq r0, r0, #2
+    bleq my_ahtoi
+    blne my_atoi
+    mov r4, r0
+
+    @ leio o segundo parametro
+    ldr r0, =opt2
+    ldrb r1, [r0, #1]
+    cmp r1, #120
+    moveq r1, #88
+    cmp r1, #88
+ 
+    addeq r0, r0, #2
+    bleq my_ahtoi
+    blne my_atoi
+    mov r1, r0
+    mov r0, r4
+
+    @ calculo a posicao real da memoria
+    mov r2, #5
+    mul r3, r2, r0
+    ldr r2, =IAS_MEM
+    add r0, r2, r3
+
+    @ coloco na memoria o valor
+    str r1, [r0]
+    mov r1, #0
+    @strb r1, [r0, #4]
+
+    pop {r4}
     pop {pc}
 
 @ Interpreta um comando p
@@ -101,6 +137,31 @@ cmd_stw:
 cmd_p:
     push {lr}
 
+    ldr r0, =opt1
+    ldrb r1, [r0, #1]
+    cmp r1, #120
+    moveq r1, #88
+    cmp r1, #88
+ 
+    addeq r0, r0, #2
+    bleq my_ahtoi
+    blne my_atoi
+
+    @ calculo a posicao real da memoria
+    mov r2, #5
+    mul r3, r2, r0
+    ldr r2, =IAS_MEM
+    add r0, r2, r3
+
+    ldr r0, [r0]
+    ldr r1, =str_address
+    bl my_itoah
+
+    ldr r0, =str_address
+    bl put_str
+    ldr r0, =new_line
+    bl put_str
+    
     pop {pc}
 
 @ Interpreta um comando regs
