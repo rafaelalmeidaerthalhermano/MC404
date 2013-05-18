@@ -217,8 +217,8 @@ cmd_regs:
     mov r2, r0    
     and r2, r2, r3
     cmp r2, #0
-    moveq r4, =pc_right
-    movne r4, =pc_left
+    ldreq r4, =pc_right
+    ldrne r4, =pc_left
 
     LSR r0, #1
     ldr r1, =str_address
