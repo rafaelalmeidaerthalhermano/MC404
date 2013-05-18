@@ -18,10 +18,16 @@
 .data
     opt1       : .space 8
     opt2       : .space 8
+    bit_mask   : .word 0b01
+
     ac_message : .asciz "AC: 0x"
     mq_message : .asciz "MQ: 0x"
     pc_message : .asciz "PC: 0x"
+
     new_line   : .asciz "\n"
+
+    pc_right   : .asciz "d"
+    pc_left    : .asciz "e"
 
     str_address: .space 100
 
@@ -161,13 +167,14 @@ cmd_p:
     bl put_str
     ldr r0, =new_line
     bl put_str
-    
+
     pop {pc}
 
 @ Interpreta um comando regs
 @
 cmd_regs:
     push {lr}
+    push {r4}
 
     @ imprime AC 
     ldr r0, =ac_message
@@ -203,14 +210,30 @@ cmd_regs:
 
     ldr r0, =PC
     ldr r0, [r0]
+
+    @ calculo o lado de pc
+    ldr r3, =bit_mask
+    ldr r3, [r3]
+    mov r2, r0    
+    and r2, r2, r3
+    cmp r2, #0
+    moveq r4, =pc_right
+    movne r4, =pc_left
+
+    LSR r0, #1
     ldr r1, =str_address
     bl my_itoah
 
     ldr r0, =str_address
     bl put_str
+
+    mov r0, r4
+    bl put_str
+
     ldr r0, =new_line
     bl put_str
 
+    pop {r4}
     pop {pc}
 
 @ Principal controle do fluxo de execucao do simulador, ela le o
