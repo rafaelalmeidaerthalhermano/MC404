@@ -5,6 +5,7 @@
 @ ra    : 121286
 @
 .extern my_strcmp
+.globl put_str
 .globl get_str
 
 .data
@@ -12,6 +13,49 @@
 
 .text
 .align 4
+
+@ Coloca na saida padrão o caracter contido no endereco 
+@ apontado por r0 e retorna em r0 o status
+@
+@ entrada   : {r0: endereco do caracter que sera escrito}
+@ saida     : {r0: status[#1:escrito, #0:nao escrito]}
+@
+put_chr:
+    push {lr}
+    push {r7}
+
+    mov r1, r0
+    mov r0, #0x1
+    mov r2, #0x1
+    mov r7, #0x4
+    svc 0
+
+    pop {r7}
+    pop {pc}
+
+@ Coloca na saida padrão a string contida no endereco apontado
+@ por r0
+@
+@ entrada   : {r0: endereco da string que sera escrita}
+@
+put_str:
+    push {lr}
+    push {r4}
+
+    mov r4, r0
+
+put_str_head:
+    ldrb r0, [r4]
+    cmp r0, #0
+    beq put_str_tail
+    mov r0, r4
+    bl put_chr
+    add r4, r4, #1
+    b put_str_head
+
+put_str_tail:
+    pop {r4}
+    pop {pc}
 
 @ Coloca no endereco apontado por r0 o ultimo caracter lido na
 @ entrada padrao e retorna em r0 o status
@@ -33,10 +77,8 @@ get_chr:
     pop {pc}
 
 @ Coloca no endereço apontado por r0 a string lida pela entrada padrão
-@ e retorna o número de caracteres lidos
 @
 @ entrada   : {r0: endereco do buffer aonde será inserida a string}
-@ saida     : {r0: numero de caracteres lidos}
 @
 get_str:
     push {lr}

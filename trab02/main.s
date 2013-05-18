@@ -6,6 +6,7 @@
 @
 .extern my_itoah
 .extern get_cmd
+.extern put_str
 
 .extern IAS_MEM
 .extern PC
@@ -24,7 +25,6 @@
     pc_message : .asciz "PC: 0x"
 
     str_address: .space 100
-    temp : .asciz "%s\n"
 
 .text
 .align 4
@@ -109,42 +109,39 @@ cmd_regs:
 
     @ imprime AC 
     ldr r0, =ac_message
-    bl printf
+    bl put_str
 
     ldr r0, =AC
     ldr r0, [r0]
     ldr r1, =str_address
     bl my_itoah
 
-    ldr r0, =temp
-    ldr r1, =str_address
-    bl printf
+    ldr r0, =str_address
+    bl put_str
 
     @ imprime MQ
     ldr r0, =mq_message
-    bl printf
+    bl put_str
 
     ldr r0, =MQ
     ldr r0, [r0]
     ldr r1, =str_address
     bl my_itoah
 
-    ldr r0, =temp
-    ldr r1, =str_address
-    bl printf
+    ldr r0, =str_address
+    bl put_str
 
     @ imprime PC 
     ldr r0, =pc_message
-    bl printf
+    bl put_str
 
     ldr r0, =PC
     ldr r0, [r0]
     ldr r1, =str_address
     bl my_itoah
 
-    ldr r0, =temp
-    ldr r1, =str_address
-    bl printf
+    ldr r0, =str_address
+    bl put_str
 
     pop {pc}
 
