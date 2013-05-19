@@ -7,7 +7,7 @@
 .extern my_itoah
 .extern get_cmd
 .extern put_str
-.extern strlen
+.extern my_strlen
 
 .extern IAS_MEM
 .extern PC
@@ -25,6 +25,7 @@
     mq_message : .asciz "MQ: 0x"
     pc_message : .asciz "PC: 0x"
     hex_format : .asciz "0x"
+    zero       : .asciz "0"
 
     new_line   : .asciz "\n"
 
@@ -35,55 +36,6 @@
 
 .text
 .align 4
-
-
-@ Formata uma string para possuir 8 caracteres
-@
-@ entrada   : {r0: endereco do caracter que sera formatado}
-@
-format:
-    push {pc}
-    push {r4}
-    push {r5}
-    push {r6}
-
-    mov r4, r0
-    mov r6, r0
-    bl strlen
-
-    @verifico se o numero é negativo
-    ldrb r5, [r4]
-    mov r5, #48
-    cmp r5, #70
-    moveq r5, #70
-    cmp r5, #102
-    moveq r5, #70
-
-format_head:
-    cmp r0, #8
-    bhi format_read
-    push {r5}
-    add r0, r0, #1
-    b format_head
-
-format_read:
-    ldrb r5, [r4], #1
-    push {r5}
-    cmp r5, #0
-    beq format_print
-    b format_read
-
-format_print:
-    @ removo o digito da pilha
-    pop {r0}
-    strb r0, [r6], #1
-    cmp r0, #0
-    bne format_print
-
-    pop {r6}
-    pop {r5}
-    pop {r4}
-    pop {lr}
 
 @ Incrementa em uma posicao PC,AC e MQ
 @
@@ -181,10 +133,34 @@ cmd_stw:
     ldr r2, =IAS_MEM
     add r0, r2, r3
 
-    @ coloco na memoria o valor
-    str r1, [r0]
-    mov r1, #0
-    @strb r1, [r0, #4]
+    @ insiro o primeiro byte
+    cmp r1, #0
+    mov r2, #0x00
+    movlt r2, #0xff 
+    strb r2, [r0], #1
+
+    @ insiro o segundo byte
+    mov r2, #0xff000000
+    and r2, r1, r2
+    mov r2, r2, lsr #24
+    strb r2, [r0], #1
+
+    @ insiro o terceiro byte
+    mov r2, #0x00ff0000
+    and r2, r1, r2
+    mov r2, r2, lsr #16
+    strb r2, [r0], #1
+
+    @ insiro o quarto byte
+    mov r2, #0x0000ff00
+    and r2, r1, r2
+    mov r2, r2, lsr #8
+    strb r2, [r0], #1
+
+    @ insiro o quinto byte
+    mov r2, #0x000000ff
+    and r2, r1, r2
+    strb r2, [r0]
 
     pop {r4}
     pop {pc}
@@ -193,6 +169,10 @@ cmd_stw:
 @
 cmd_p:
     push {lr}
+    push {r4}
+
+    ldr r0, =hex_format
+    bl put_str
 
     ldr r0, =opt1
     ldrb r1, [r0, #1]
@@ -208,22 +188,82 @@ cmd_p:
     mov r2, #5
     mul r3, r2, r0
     ldr r2, =IAS_MEM
-    add r0, r2, r3
+    add r4, r2, r3
 
-    ldr r0, [r0]
+    @ leio o primeiro byte
+    add r4, r4, #0
+    ldrb r0, [r4]
+
+    cmp r0, #15
+    ldrls r0, =zero
+    blls put_str
+
+    ldrb r0, [r4]
     ldr r1, =str_address
     bl my_itoah
-
-    ldr r1, =str_address
-    format
-
-    ldr r0, =hex_format
-    bl put_str
     ldr r0, =str_address
-    bl put_str
+    bl put_str 
+
+    @ leio o segundo byte
+    add r4, r4, #1
+    ldrb r0, [r4]
+
+    cmp r0, #15
+    ldrls r0, =zero
+    blls put_str
+
+    ldrb r0, [r4]
+    ldr r1, =str_address
+    bl my_itoah
+    ldr r0, =str_address
+    bl put_str 
+
+    @ leio o terceiro byte
+    add r4, r4, #1
+    ldrb r0, [r4]
+
+    cmp r0, #15
+    ldrls r0, =zero
+    blls put_str
+
+    ldrb r0, [r4]
+    ldr r1, =str_address
+    bl my_itoah
+    ldr r0, =str_address
+    bl put_str 
+
+    @ leio o quarto byte
+    add r4, r4, #1
+    ldrb r0, [r4]
+
+    cmp r0, #15
+    ldrls r0, =zero
+    blls put_str
+
+    ldrb r0, [r4]
+    ldr r1, =str_address
+    bl my_itoah
+    ldr r0, =str_address
+    bl put_str 
+
+    @ leio o quinto byte
+    add r4, r4, #1
+    ldrb r0, [r4]
+
+    cmp r0, #15
+    ldrls r0, =zero
+    blls put_str
+
+    ldrb r0, [r4]
+    ldr r1, =str_address
+    bl my_itoah
+    ldr r0, =str_address
+    bl put_str 
+
     ldr r0, =new_line
     bl put_str
 
+    pop {r4}
     pop {pc}
 
 @ Interpreta um comando regs

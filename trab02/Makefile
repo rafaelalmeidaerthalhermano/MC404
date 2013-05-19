@@ -11,7 +11,7 @@ strutils.o: strutils.s
 interface.o: interface.s
 	as -g interface.s -o interface.o
 
-interface.o: io.s
+io.o: io.s
 	as -g io.s -o io.o
 
 main.o: main.s
