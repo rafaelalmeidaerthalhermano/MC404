@@ -23,11 +23,12 @@
     ac_message : .asciz "AC: 0x"
     mq_message : .asciz "MQ: 0x"
     pc_message : .asciz "PC: 0x"
+    hex_format : .asciz "0x"
 
     new_line   : .asciz "\n"
 
-    pc_right   : .asciz "d"
-    pc_left    : .asciz "e"
+    pc_right   : .asciz "/D"
+    pc_left    : .asciz "/E"
 
     str_address: .space 100
 
@@ -163,6 +164,8 @@ cmd_p:
     ldr r1, =str_address
     bl my_itoah
 
+    ldr r0, =hex_format
+    bl put_str
     ldr r0, =str_address
     bl put_str
     ldr r0, =new_line
