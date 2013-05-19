@@ -7,6 +7,7 @@
 .extern my_itoah
 .extern get_cmd
 .extern put_str
+.extern strlen
 
 .extern IAS_MEM
 .extern PC
@@ -34,6 +35,55 @@
 
 .text
 .align 4
+
+
+@ Formata uma string para possuir 8 caracteres
+@
+@ entrada   : {r0: endereco do caracter que sera formatado}
+@
+format:
+    push {pc}
+    push {r4}
+    push {r5}
+    push {r6}
+
+    mov r4, r0
+    mov r6, r0
+    bl strlen
+
+    @verifico se o numero é negativo
+    ldrb r5, [r4]
+    mov r5, #48
+    cmp r5, #70
+    moveq r5, #70
+    cmp r5, #102
+    moveq r5, #70
+
+format_head:
+    cmp r0, #8
+    bhi format_read
+    push {r5}
+    add r0, r0, #1
+    b format_head
+
+format_read:
+    ldrb r5, [r4], #1
+    push {r5}
+    cmp r5, #0
+    beq format_print
+    b format_read
+
+format_print:
+    @ removo o digito da pilha
+    pop {r0}
+    strb r0, [r6], #1
+    cmp r0, #0
+    bne format_print
+
+    pop {r6}
+    pop {r5}
+    pop {r4}
+    pop {lr}
 
 @ Incrementa em uma posicao PC,AC e MQ
 @
@@ -163,6 +213,9 @@ cmd_p:
     ldr r0, [r0]
     ldr r1, =str_address
     bl my_itoah
+
+    ldr r1, =str_address
+    format
 
     ldr r0, =hex_format
     bl put_str
