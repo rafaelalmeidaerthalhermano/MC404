@@ -1,6 +1,9 @@
 
-main: strutils.o interface.o io.o main.o ias_state.o
-	gcc -g strutils.o interface.o io.o main.o ias_state.o -o main
+main: strutils.o interface.o ias_engine.o io.o main.o ias_state.o
+	gcc -g strutils.o interface.o io.o main.o ias_state.o ias_engine.o -o main
+
+ias_engine.o: ias_engine.s
+	as -g ias_engine.s -o ias_engine.o 
 
 ias_state.o: ias_state.s
 	as -g ias_state.s -o ias_state.o 
