@@ -10,6 +10,26 @@
 .extern AC
 .extern MQ
 
+.extern ins_loadmq
+.extern ins_loadmqm
+.extern ins_storm
+.extern ins_loadm
+.extern ins_loadminusm
+.extern ins_loadmodulusm
+.extern ins_jumpmleft
+.extern ins_jumpmright
+.extern ins_jumpmcondleft
+.extern ins_jumpmcondright
+.extern ins_addm
+.extern ins_addmodulusm
+.extern ins_subm
+.extern ins_submodulusm
+.extern ins_mulm
+.extern ins_divm
+.extern ins_lsh
+.extern ins_rsh
+.extern ins_stormleft
+
 .globl step_instruction
 
 .data
@@ -26,93 +46,180 @@
 decode_instruction:
     push {lr}
     push {r4}
+    push {r5}
 
     mov r4, #1
+    mov r5, r0
 
     @ separo o opcode do endereco
 
-    cmp r0, #0b00001010
+
+    @ verifico qual a instrução chamada
+
+    mov r0, #0b00001010
+    cmp r5, r0
     beq ins_loadmq
+    mov r0, #0b00001010
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
 
-    cmp r0, #0b00001001
+    mov r0, #0b00001001
+    cmp r5, r0
     beq ins_loadmqm
+    mov r0, #0b00001001
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
 
-    cmp r0, #0b00100001
+    mov r0, #0b00100001
+    cmp r5, r0
     beq ins_storm
+    mov r0, #0b00100001
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
 
-    cmp r0, #0b00000001
+    mov r0, #0b00000001
+    cmp r5, r0
     beq ins_loadm
+    mov r0, #0b00000001
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
 
-    cmp r0, #0b00000010
+    mov r0, #0b00000010
+    cmp r5, r0
     beq ins_loadminusm
+    mov r0, #0b00000010
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
 
-    cmp r0, #0b00000011
+    mov r0, #0b00000011
+    cmp r5, r0
     beq ins_loadmodulusm
+    mov r0, #0b00000011
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
 
-    cmp r0, #0b00001101
+    mov r0, #0b00001101
+    cmp r5, r0
     beq ins_jumpmleft
+    mov r0, #0b00001101
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
 
-    cmp r0, #0b00001110
+    mov r0, #0b00001110
+    cmp r5, r0
     beq ins_jumpmright
+    mov r0, #0b00001110
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
 
-    cmp r0, #0b00001111
+    mov r0, #0b00001111
+    cmp r5, r0
     beq ins_jumpmcondleft
+    mov r0, #0b00001111
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
 
-    cmp r0, #0b00010000
+    mov r0, #0b00010000
+    cmp r5, r0
     beq ins_jumpmcondright
+    mov r0, #0b00010000
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
 
-    cmp r0, #0b00000101
+    mov r0, #0b00000101
+    cmp r5, r0
     beq ins_addm
+    mov r0, #0b00000101
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
 
-    cmp r0, #0b00000111
+    mov r0, #0b00000111
+    cmp r5, r0
     beq ins_addmodulusm
+    mov r0, #0b00000111
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
 
-    cmp r0, #0b00000110
+    mov r0, #0b00000110
+    cmp r5, r0
     beq ins_subm
+    mov r0, #0b00000110
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
 
-    cmp r0, #0b00001000
+    mov r0, #0b00001000
+    cmp r5, r0
     beq ins_submodulusm
+    mov r0, #0b00001000
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
 
-    cmp r0, #0b00001011
+    mov r0, #0b00001011
+    cmp r5, r0
     beq ins_mulm
+    mov r0, #0b00001011
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
 
-    cmp r0, #0b00001100
+    mov r0, #0b00001100
+    cmp r5, r0
     beq ins_divm
+    mov r0, #0b00001100
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
 
-    cmp r0, #0b00010100
+    mov r0, #0b00010100
+    cmp r5, r0
     beq ins_lsh
+    mov r0, #0b00010100
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
 
-    cmp r0, #0b00010101
+    mov r0, #0b00010101
+    cmp r5, r0
     beq ins_rsh
+    mov r0, #0b00010101
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
 
-    cmp r0, #0b00010010
+    mov r0, #0b00010010
+    cmp r5, r0
     beq ins_stormleft
+    mov r0, #0b00010010
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
 
-    cmp r0, #0b00010011
+    mov r0, #0b00010011
+    cmp r5, r0
     beq ins_stormright
+    mov r0, #0b00010011
+    cmp r5, r0
     moveq r4, #0
+    beq decode_instruction_tail
+
+decode_instruction_tail:
 
     mov r0, r4
-
+    pop {r5}
     pop {r4}
     pop {pc}
 
