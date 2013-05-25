@@ -14,7 +14,7 @@
 .extern AC
 .extern MQ
 
-.extern ins_lsh
+.extern ins_rsh
 
 .globl main
 
@@ -319,7 +319,7 @@ cmd_regs:
 main:
     push {lr}
 
-    bl ins_lsh
+    bl ins_rsh
     bl cmd_regs
 
 main_head:

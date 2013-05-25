@@ -439,21 +439,24 @@ ins_divm:
 ins_lsh:
     push {lr}
 
-    mov r4, r0
-
     ldr r1, =AC
     ldr r1, [r1]
-
     mov r0, r1, lsl #1
-
     ldr r1, =AC
     str r0, [r1]
+
     pop {pc}
 
 @ Desloca os bits de ac para a direita
 @
 ins_rsh:
     push {lr}
+
+    ldr r1, =AC
+    ldr r1, [r1]
+    mov r0, r1, lsr #1
+    ldr r1, =AC
+    str r0, [r1]
 
     pop {pc}
 
