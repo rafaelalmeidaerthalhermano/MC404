@@ -37,28 +37,6 @@
 .text
 .align 4
 
-@ Incrementa em uma posicao PC,AC e MQ
-@
-step_instruction:
-    push {lr}
-
-    ldr r0, =PC
-    ldr r1, [r0]
-    add r1, r1, #1
-    str r1, [r0]
-
-    ldr r0, =AC
-    ldr r1, [r0]
-    add r1, r1, #1
-    str r1, [r0]
-
-    ldr r0, =MQ
-    ldr r1, [r0]
-    add r1, r1, #1
-    str r1, [r0]
-
-    pop {pc}
-
 @ Interpreta um comando si
 @
 cmd_si:
@@ -338,6 +316,14 @@ cmd_regs:
 @
 main:
     push {lr}
+
+    mov r0, #0
+    bl ins_loadmqm
+    bl cmd_regs
+
+    mov r0, #0
+    bl ins_loadmqm
+    bl cmd_regs
 
 main_head:
     ldr r0, =opt1

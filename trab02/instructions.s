@@ -37,6 +37,11 @@
 ins_loadmq:
     push {lr}
 
+    ldr r0, =PC
+    ldr r0, [r0]
+    ldr r1, =MQ
+    str r0, [r1]
+
     pop {pc}
 
 @ Transfere o conteúdo da memória apontado por m para o registrador mq
@@ -45,7 +50,28 @@ ins_loadmq:
 @
 ins_loadmqm:
     push {lr}
-    
+    push {r4}
+
+    ldrb r1, [r0], #1
+    mov r1, r1, lsl #0
+
+    ldrb r2, [r0], #1
+    mov r2, r2, lsl #8
+
+    ldrb r3, [r0], #1
+    mov r3, r3, lsl #16
+
+    ldrb r4, [r0], #1
+    mov r4, r4, lsl #24
+
+    orr r1, r1, r2
+    orr r1, r1, r3
+    orr r1, r1, r4
+
+    ldr r2, =MQ
+    str r1, [r2]
+
+    pop {r4}
     pop {pc}
 
 @ Transfere o conteúdo do registrador ac para a memória no endereço m
@@ -63,7 +89,28 @@ ins_storm:
 @
 ins_loadm:
     push {lr}
-    
+    push {r4}
+
+    ldrb r1, [r0], #1
+    mov r1, r1, lsl #0
+
+    ldrb r2, [r0], #1
+    mov r2, r2, lsl #8
+
+    ldrb r3, [r0], #1
+    mov r3, r3, lsl #16
+
+    ldrb r4, [r0], #1
+    mov r4, r4, lsl #24
+
+    orr r1, r1, r2
+    orr r1, r1, r3
+    orr r1, r1, r4
+
+    ldr r2, =AC
+    str r1, [r2]
+
+    pop {r4}
     pop {pc}
 
 @ Transfere o negativo do conteúdo da memória apontado por m para ac
@@ -72,7 +119,31 @@ ins_loadm:
 @
 ins_loadminusm:
     push {lr}
-    
+    push {r4}
+
+    ldrb r1, [r0], #1
+    mov r1, r1, lsl #0
+
+    ldrb r2, [r0], #1
+    mov r2, r2, lsl #8
+
+    ldrb r3, [r0], #1
+    mov r3, r3, lsl #16
+
+    ldrb r4, [r0], #1
+    mov r4, r4, lsl #24
+
+    orr r1, r1, r2
+    orr r1, r1, r3
+    orr r1, r1, r4
+
+    mov r2, #-1
+    mul r0, r1, r2
+
+    ldr r2, =MQ
+    str r1, [r2]
+
+    pop {r4}
     pop {pc}
 
 @ Transfere o absoluto do conteúdo da memória apontado por m para ac
