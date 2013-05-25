@@ -21,10 +21,10 @@ PC:
 	.word	0
 
 AC:
-	.word	11
+	.word	-1
 
 MQ:
-	.word	-1
+	.word	0
 
 IAS_MEM:
 	mm_entry 01 02 03 04 05
