@@ -429,23 +429,26 @@ ins_submodulusm:
 ins_mulm:
     push {lr}
 
-    @ salvo o antigo de valor de ac
-    ldr r1, =AC
-    ldr r1, [r1]
-    push {r1}
-
     @ leio o valor da memória
     bl ins_loadm
     ldr r0, =AC
     ldr r0, [r0]
 
+    @ carrego o antigo de valor de ac
+    ldr r1, =MQ
+    ldr r1, [r1]
+
     @ computo a multiplicação
-    pop {r1}
     mul r2, r1, r0
 
     @ salvo o novo valor
     ldr r0, =MQ
     str r2, [r0]
+
+    @ salvo o novo valor
+    ldr r0, =AC
+    mov r1, #0
+    str r1, [r0]
 
     pop {pc}
 
