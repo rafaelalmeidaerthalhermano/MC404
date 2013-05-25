@@ -252,6 +252,12 @@ ins_loadmodulusm:
 ins_jumpmleft:
     push {lr}
 
+    mov r0, r0, lsr #1
+
+    @ altero o valor de pc
+    ldr r1, =PC
+    str r0, [r1]
+
     pop {pc}
 
 @ Salta para a instrução da direita na palavra contida no endereço m da memoria
