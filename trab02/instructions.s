@@ -439,6 +439,8 @@ ins_divm:
 ins_lsh:
     push {lr}
 
+    mov r4, r0
+
     ldr r1, =AC
     ldr r1, [r1]
 
