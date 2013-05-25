@@ -439,12 +439,10 @@ ins_divm:
 ins_lsh:
     push {lr}
 
-    mov r4, r0
-
     ldr r1, =AC
     ldr r1, [r1]
 
-    mov r0, r0, lsl #1
+    mov r0, r1, lsh #1
 
     ldr r1, =AC
     str r0, [r1]
