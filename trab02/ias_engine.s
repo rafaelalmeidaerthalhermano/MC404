@@ -51,7 +51,7 @@ decode_instruction:
 decode_instruction_head:
     @ separo o opcode do endereco
     mov r1, r0, lsr #12
-    mov r2, #0b00000000111111111111
+    ldr r2, =0b00000000111111111111
     and r0, r0, r2
 
     mov r4, #0b00001010
