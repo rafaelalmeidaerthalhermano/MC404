@@ -444,7 +444,7 @@ ins_lsh:
     ldr r1, =AC
     ldr r1, [r1]
 
-    mov r0, r1, lsh #1
+    mov r0, r1, lsl #1
 
     ldr r1, =AC
     str r0, [r1]
