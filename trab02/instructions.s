@@ -37,9 +37,9 @@
 ins_loadmq:
     push {lr}
 
-    ldr r0, =PC
+    ldr r0, =MQ
     ldr r0, [r0]
-    ldr r1, =MQ
+    ldr r1, =AC
     str r0, [r1]
 
     pop {pc}
