@@ -14,7 +14,7 @@
 .extern AC
 .extern MQ
 
-.extern ins_jumpmcondleft
+.extern ins_jumpmcondright
 
 .globl main
 
@@ -321,7 +321,7 @@ main:
 
     bl cmd_regs
     mov r0, #3
-    bl ins_jumpmcondleft
+    bl ins_jumpmcondright
     bl cmd_regs
 
 main_head:

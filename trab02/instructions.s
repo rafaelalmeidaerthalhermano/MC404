@@ -300,6 +300,12 @@ ins_jumpmcondleft:
 ins_jumpmcondright:
     push {lr}
 
+    ldr r1, =AC
+    ldr r1, [r1]
+
+    cmp r1, #0
+    blge ins_jumpmright
+
     pop {pc}
 
 @ Soma o valor contido no endereço m da memoria com o valor de ac e coloca o
