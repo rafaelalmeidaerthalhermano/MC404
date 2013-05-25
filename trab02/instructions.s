@@ -455,7 +455,7 @@ ins_divm_head:
 
 ins_divm_tail:
     ldr r2, =AC
-    str r1, [r3]
+    str r1, [r2]
     ldr r2, =MQ
     str r0, [r2]
 
