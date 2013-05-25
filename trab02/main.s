@@ -319,6 +319,7 @@ cmd_regs:
 main:
     push {lr}
 
+    bl cmd_regs
     mov r0, #3
     bl ins_jumpmcondleft
     bl cmd_regs
