@@ -235,10 +235,10 @@ ins_loadmodulusm:
     orr r1, r1, r3
     orr r1, r1, r4
 
-    @TODO arrumar essa bagaça
-    @cmp r1, #0
-    @movlt r2, #-1
-    @mullt r1, r1, r2
+    cmp r1, #0
+    movlt r2, #-1
+    mullt r3, r1, r2
+    movlt r1, r3
 
     ldr r2, =AC
     str r1, [r2]
@@ -290,26 +290,25 @@ ins_jumpmcondright:
 @
 ins_addm:
     push {lr}
-    push {r4}
 
-    mov r4, r0
-
+    @ salvo o antigo de valor de ac
     ldr r1, =AC
     ldr r1, [r1]
-
     push {r1}
-    bl ins_loadm
-    pop {r1}
 
+    @ leio o valor da memória
+    bl ins_loadm
     ldr r0, =AC
     ldr r0, [r0]
 
+    @ computo a soma
+    pop {r1}
     add r1, r1, r0
 
+    @ salvo o novo valor
     ldr r0, =AC
     str r1, [r0]
 
-    pop {r4}
     pop {pc}
 
 @ Soma o valor absoluto contido no endereço m da memoria com o valor de ac e
@@ -320,22 +319,24 @@ ins_addm:
 ins_addmodulusm:
     push {lr}
 
-    mov r4, r0
-
+    @ salvo o antigo de valor de ac
     ldr r1, =AC
     ldr r1, [r1]
-
     push {r1}
-    bl ins_loadmodulusm
-    pop {r1}
 
+    @ leio o valor da memória
+    bl ins_loadmodulusm
     ldr r0, =AC
     ldr r0, [r0]
 
+    @ computo a soma
+    pop {r1}
     add r1, r1, r0
 
+    @ salvo o novo valor
     ldr r0, =AC
     str r1, [r0]
+
     pop {pc}
 
 @ Subtrai o valor contido no endereço m da memoria do valor de ac e coloca o
@@ -345,26 +346,25 @@ ins_addmodulusm:
 @
 ins_subm:
     push {lr}
-    push {r4}
 
-    mov r4, r0
-
+    @ salvo o antigo de valor de ac
     ldr r1, =AC
     ldr r1, [r1]
-
     push {r1}
-    bl ins_loadm
-    pop {r1}
 
+    @ leio o valor da memória
+    bl ins_loadm
     ldr r0, =AC
     ldr r0, [r0]
 
+    @ computo a subtração
+    pop {r1}
     sub r1, r1, r0
 
+    @ salvo o novo valor
     ldr r0, =AC
     str r1, [r0]
 
-    pop {r4}
     pop {pc}
 
 @ Subtrai o valor absoluto contido no endereço m da memoria do valor de ac e
@@ -374,26 +374,25 @@ ins_subm:
 @
 ins_submodulusm:
     push {lr}
-    push {r4}
 
-    mov r4, r0
-
+    @ salvo o antigo de valor de ac
     ldr r1, =AC
     ldr r1, [r1]
-
     push {r1}
-    bl ins_loadm
-    pop {r1}
 
+    @ leio o valor da memória
+    bl ins_loadmodulusm
     ldr r0, =AC
     ldr r0, [r0]
 
+    @ computo a subtração
+    pop {r1}
     sub r1, r1, r0
 
+    @ salvo o novo valor
     ldr r0, =AC
     str r1, [r0]
 
-    pop {r4}
     pop {pc}
 
 @ Multiplica o valor contido no endereço m da memoria com o valor de mq e coloca
@@ -403,26 +402,25 @@ ins_submodulusm:
 @
 ins_mulm:
     push {lr}
-    push {r4}
 
-    mov r4, r0
-
+    @ salvo o antigo de valor de ac
     ldr r1, =AC
     ldr r1, [r1]
-
     push {r1}
+
+    @ leio o valor da memória
     bl ins_loadm
+    ldr r0, =AC
+    ldr r0, [r0]
+
+    @ computo a multiplicação
     pop {r1}
+    mul r2, r1, r0
 
-    ldr r2, =AC
-    ldr r2, [r2]
+    @ salvo o novo valor
+    ldr r0, =MQ
+    str r2, [r0]
 
-    mul r0, r1, r2
-
-    ldr r1, =AC
-    str r0, [r1]
-
-    pop {r4}
     pop {pc}
 
 @ Divide o valor em ac pelo valor no endereco m da memória e coloca o quociente
@@ -433,15 +431,17 @@ ins_mulm:
 ins_divm:
     push {lr}
 
+    @ salvo o antigo valor de ac
     ldr r1, =AC
     ldr r1, [r1]
-
     push {r1}
-    bl ins_loadm
-    pop {r1}
 
+    @ leio o valor da memória
+    bl ins_loadm
     ldr r2, =AC
     ldr r2, [r2]
+
+    pop {r1}
 
     mov r0, #0
 

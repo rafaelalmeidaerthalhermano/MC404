@@ -319,6 +319,7 @@ cmd_regs:
 main:
     push {lr}
 
+    mov r0, #1
     bl ins_divm
     bl cmd_regs
 
