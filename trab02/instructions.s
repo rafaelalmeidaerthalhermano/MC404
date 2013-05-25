@@ -87,6 +87,44 @@ ins_loadmqm:
 @
 ins_storm:
     push {lr}
+
+    ldr r1, =AC
+    ldr r1, [r1]
+
+    @ calculo a posicao real da memoria
+    mov r2, #5
+    mul r3, r2, r0
+    ldr r2, =IAS_MEM
+    add r0, r2, r3
+
+    @ insiro o primeiro byte
+    cmp r1, #0
+    mov r2, #0x00
+    movlt r2, #0xff 
+    strb r2, [r0], #1
+
+    @ insiro o segundo byte
+    mov r2, #0xff000000
+    and r2, r1, r2
+    mov r2, r2, lsr #24
+    strb r2, [r0], #1
+
+    @ insiro o terceiro byte
+    mov r2, #0x00ff0000
+    and r2, r1, r2
+    mov r2, r2, lsr #16
+    strb r2, [r0], #1
+
+    @ insiro o quarto byte
+    mov r2, #0x0000ff00
+    and r2, r1, r2
+    mov r2, r2, lsr #8
+    strb r2, [r0], #1
+
+    @ insiro o quinto byte
+    mov r2, #0x000000ff
+    and r2, r1, r2
+    strb r2, [r0]
     
     pop {pc}
 

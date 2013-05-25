@@ -10,6 +10,7 @@
 .extern my_strlen
 
 .extern ins_loadmodulusm
+.extern ins_storm
 
 .extern IAS_MEM
 .extern PC
@@ -320,8 +321,12 @@ main:
     push {lr}
 
     mov r0, #0
-    bl ins_loadmodulusm
-    bl cmd_regs
+    bl ins_storm
+
+    mov r0, #0
+    ins_loadmodulusm
+
+    bl regs
 
 main_head:
     ldr r0, =opt1

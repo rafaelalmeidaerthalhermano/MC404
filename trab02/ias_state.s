@@ -21,7 +21,7 @@ PC:
 	.word	0
 
 AC:
-	.word	0
+	.word	mm_entry 0xAABBCCDD
 
 MQ:
 	.word	0
