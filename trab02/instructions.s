@@ -140,7 +140,7 @@ ins_loadm:
     mov r2, #5
     mul r3, r2, r0
     ldr r2, =IAS_MEM
-    add r0, r0, r2
+    add r0, r3, r2
     add r0, r0, #1
 
     ldrb r1, [r0], #1
