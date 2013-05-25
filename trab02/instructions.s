@@ -28,6 +28,7 @@
 .globl ins_lsh
 .globl ins_rsh
 .globl ins_stormleft
+.globl ins_stormright
 
 .text
 .align 4
