@@ -319,6 +319,22 @@ ins_addm:
 ins_addmodulusm:
     push {lr}
 
+    mov r4, r0
+
+    ldr r1, =AC
+    ldr r1, [r1]
+
+    push {r1}
+    bl ins_loadmodulusm
+    pop {r1}
+
+    ldr r0, =AC
+    ldr r0, [r0]
+
+    add r1, r1, r0
+
+    ldr r0, =AC
+    str r1, [r0]
     pop {pc}
 
 @ Subtrai o valor contido no endereço m da memoria do valor de ac e coloca o

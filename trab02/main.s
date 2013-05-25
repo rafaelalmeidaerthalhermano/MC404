@@ -9,7 +9,7 @@
 .extern put_str
 .extern my_strlen
 
-.extern ins_addm
+.extern ins_addmodulusm
 
 .extern IAS_MEM
 .extern PC
@@ -320,7 +320,7 @@ main:
     push {lr}
 
     mov r0, #1
-    bl ins_addm
+    bl ins_addmodulusm
     bl cmd_regs
 
 main_head:
