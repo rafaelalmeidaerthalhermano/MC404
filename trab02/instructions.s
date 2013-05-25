@@ -373,7 +373,26 @@ ins_subm:
 @
 ins_submodulusm:
     push {lr}
+    push {r4}
 
+    mov r4, r0
+
+    ldr r1, =AC
+    ldr r1, [r1]
+
+    push {r1}
+    bl ins_loadm
+    pop {r1}
+
+    ldr r0, =AC
+    ldr r0, [r0]
+
+    sub r1, r1, r0
+
+    ldr r0, =AC
+    str r1, [r0]
+
+    pop {r4}
     pop {pc}
 
 @ Multiplica o valor contido no endereço m da memoria com o valor de mq e coloca
