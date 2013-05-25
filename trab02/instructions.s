@@ -402,7 +402,26 @@ ins_submodulusm:
 @
 ins_mulm:
     push {lr}
+    push {r4}
 
+    mov r4, r0
+
+    ldr r1, =AC
+    ldr r1, [r1]
+
+    push {r1}
+    bl ins_loadm
+    pop {r1}
+
+    ldr r2, =AC
+    ldr r2, [r2]
+
+    mul r0, r1, r2
+
+    ldr r1, =AC
+    str r0, [r1]
+
+    pop {r4}
     pop {pc}
 
 @ Divide o valor em ac pelo valor no endereco m da memória e coloca o quociente

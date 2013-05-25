@@ -14,7 +14,7 @@
 .extern AC
 .extern MQ
 
-.extern ins_submodulusm
+.extern ins_mulm
 
 .globl main
 
@@ -320,7 +320,7 @@ main:
     push {lr}
 
     mov r0, #1
-    bl ins_submodulusm
+    bl ins_mulm
     bl cmd_regs
 
 main_head:
