@@ -230,7 +230,7 @@ seek_instruction:
     mov r2, #5
     mul r3, r2, r0
     ldr r2, =IAS_MEM
-    add r0, r0, r2
+    add r0, r2, r3
 
     cmp r1, #0
     beq seek_instruction_left
