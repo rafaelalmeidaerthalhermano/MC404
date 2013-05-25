@@ -29,6 +29,7 @@
 .extern ins_lsh
 .extern ins_rsh
 .extern ins_stormleft
+.extern ins_stormright
 
 .globl step_instruction
 
