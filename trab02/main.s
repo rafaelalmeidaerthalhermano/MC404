@@ -9,6 +9,8 @@
 .extern put_str
 .extern my_strlen
 
+.extern ins_loadmqm
+
 .extern IAS_MEM
 .extern PC
 .extern AC
