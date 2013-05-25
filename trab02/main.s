@@ -9,8 +9,7 @@
 .extern put_str
 .extern my_strlen
 
-.extern ins_loadm
-.extern ins_storm
+.extern ins_addm
 
 .extern IAS_MEM
 .extern PC
@@ -321,14 +320,7 @@ main:
     push {lr}
 
     mov r0, #1
-    bl ins_loadm
-    bl cmd_regs
-
-    mov r0, #0
-    bl ins_storm
-
-    mov r0, #0
-    bl ins_loadm
+    bl ins_addm
     bl cmd_regs
 
 main_head:

@@ -56,7 +56,7 @@ ins_loadmqm:
     mov r2, #5
     mul r3, r2, r0
     ldr r2, =IAS_MEM
-    add r0, r0, r2
+    add r0, r3, r2
     add r0, r0, #1
 
     ldrb r1, [r0], #1
@@ -177,7 +177,7 @@ ins_loadminusm:
     mov r2, #5
     mul r3, r2, r0
     ldr r2, =IAS_MEM
-    add r0, r0, r2
+    add r0, r3, r2
     add r0, r0, #1
 
     ldrb r1, [r0], #1
@@ -216,7 +216,7 @@ ins_loadmodulusm:
     mov r2, #5
     mul r3, r2, r0
     ldr r2, =IAS_MEM
-    add r0, r0, r2
+    add r0, r3, r2
     add r0, r0, #1
 
     ldrb r1, [r0], #1
@@ -289,7 +289,26 @@ ins_jumpmcondright:
 @
 ins_addm:
     push {lr}
+    push {r4}
 
+    mov r4, r0
+
+    ldr r1, =AC
+    ldr r1, [r1]
+
+    push {r1}
+    bl ins_loadm
+    pop {r1}
+
+    ldr r0, =AC
+    ldr r0, [r0]
+
+    add r1, r1, r0
+
+    ldr r0, =AC
+    str r1, [r0]
+
+    pop {r4}
     pop {pc}
 
 @ Soma o valor absoluto contido no endereço m da memoria com o valor de ac e
