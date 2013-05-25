@@ -47,156 +47,158 @@
 decode_instruction:
     push {lr}
     push {r4}
+    push {r5}
 
 decode_instruction_head:
     @ separo o opcode do endereco
-    mov r1, r0, lsr #12
+    mov r5, r0, lsr #12
     ldr r2, =0b00000000111111111111
     and r0, r0, r2
 
     mov r4, #0b00001010
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_loadmq
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
     
     mov r4, #0b00001001
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_loadmqm
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
     
     mov r4, #0b00100001
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_storm
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
     
     mov r4, #0b00000001
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_loadm
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
     
     mov r4, #0b00000010
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_loadminusm
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
     
     mov r4, #0b00000011
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_loadmodulusm
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
     
     mov r4, #0b00001101
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_jumpmleft
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
     
     mov r4, #0b00001110
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_jumpmright
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
     
     mov r4, #0b00001111
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_jumpmcondleft
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
     
     mov r4, #0b00010000
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_jumpmcondright
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
     
     mov r4, #0b00000101
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_addm
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
     
     mov r4, #0b00000111
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_addmodulusm
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
     
     mov r4, #0b00000110
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_subm
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
     
     mov r4, #0b00001000
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_submodulusm
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
     
     mov r4, #0b00001011
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_mulm
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
     
     mov r4, #0b00001100
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_divm
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
     
     mov r4, #0b00010100
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_lsh
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
     
     mov r4, #0b00010101
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_rsh
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
     
     mov r4, #0b00010010
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_stormleft
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
     
     mov r4, #0b00010011
-    cmp r1, r4
+    cmp r5, r4
     bleq ins_stormright
-    cmp r1, r4
+    cmp r5, r4
     moveq r0, #0
     beq decode_instruction_tail
 
     mov r0, #1
 
 decode_instruction_tail:
+    pop {r5}
     pop {r4}
     pop {pc}
 
