@@ -267,6 +267,13 @@ ins_jumpmleft:
 ins_jumpmright:
     push {lr}
 
+    mov r0, r0, lsl #1
+    add r0, r0, #1
+
+    @ altero o valor de pc
+    ldr r1, =PC
+    str r0, [r1]
+
     pop {pc}
 
 @ Se o valor em AC ffor não negativo, salta para a instrução da esquerda na
