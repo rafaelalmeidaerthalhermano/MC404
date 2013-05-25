@@ -161,8 +161,8 @@ ins_loadminusm:
     mov r2, #-1
     mul r0, r1, r2
 
-    ldr r2, =MQ
-    str r1, [r2]
+    ldr r2, =AC
+    str r1, [r0]
 
     pop {r4}
     pop {pc}
