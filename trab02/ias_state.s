@@ -21,14 +21,14 @@ PC:
 	.word	0
 
 AC:
-	.word	mm_entry 0xAABBCCDD
+	.word	0
 
 MQ:
 	.word	0
 
 IAS_MEM:
 	mm_entry 01 02 03 04 05
-	mm_entry 01 02 03 04 05
+	mm_entry 33 33 33 33 33
 	mm_entry 01 02 03 04 05
 	mm_entry 01 02 03 04 05
 	mm_entry 01 02 03 04 05

@@ -320,6 +320,9 @@ cmd_regs:
 main:
     push {lr}
 
+    mov r0, #1
+    bl ins_loadm
+
     mov r0, #0
     bl ins_storm
 
