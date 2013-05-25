@@ -9,7 +9,7 @@
 .extern put_str
 .extern my_strlen
 
-.extern ins_loadmodulusm
+.extern ins_loadm
 .extern ins_storm
 
 .extern IAS_MEM
@@ -324,7 +324,7 @@ main:
     bl ins_storm
 
     mov r0, #0
-    ins_loadmodulusm
+    bl ins_loadm
 
     bl regs
 
