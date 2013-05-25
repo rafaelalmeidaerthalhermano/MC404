@@ -252,7 +252,7 @@ ins_loadmodulusm:
 ins_jumpmleft:
     push {lr}
 
-    mov r0, r0, lsr #1
+    mov r0, r0, lsl #1
 
     @ altero o valor de pc
     ldr r1, =PC
