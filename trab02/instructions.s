@@ -235,6 +235,7 @@ ins_loadmodulusm:
     orr r1, r1, r3
     orr r1, r1, r4
 
+    @TODO arrumar essa bagaça
     @cmp r1, #0
     @movlt r2, #-1
     @mullt r1, r1, r2
@@ -431,6 +432,32 @@ ins_mulm:
 @
 ins_divm:
     push {lr}
+
+    ldr r1, =AC
+    ldr r1, [r1]
+
+    push {r1}
+    bl ins_loadm
+    pop {r1}
+
+    ldr r2, =AC
+    ldr r2, [r2]
+
+    mov r0, #0
+
+ins_divm_head:
+    cmp r1, r2
+    blt ins_divm_tail
+
+    sub r1, r1, r2
+    add r0, r0, #1
+    b ins_divm_head
+
+ins_divm_tail:
+    ldr r2, =AC
+    str r1, [r3]
+    ldr r2, =MQ
+    str r0, [r2]
 
     pop {pc}
 
