@@ -52,6 +52,12 @@ ins_loadmqm:
     push {lr}
     push {r4}
 
+    @ calculo a posicao no IAS_MEM
+    mov r2, #5
+    mul r3, r2, r0
+    ldr r2, =IAS_MEM
+    add r0, r0, r2
+
     ldrb r1, [r0], #1
     mov r1, r1, lsl #0
 
@@ -290,4 +296,3 @@ ins_stormright:
     push {lr}
 
     pop {pc}
-    
