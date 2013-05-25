@@ -283,7 +283,7 @@ step_instruction:
     bl seek_instruction
 
     ldr r1, =status
-    ldr r1, [r0]
+    ldr r1, [r1]
     cmp r1, #1
     moveq r1, #2
     beq step_instruction_tail
