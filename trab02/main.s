@@ -322,13 +322,13 @@ main:
 
     mov r0, #1
     bl ins_loadm
+    bl cmd_regs
 
     mov r0, #0
     bl ins_storm
 
     mov r0, #0
     bl ins_loadm
-
     bl cmd_regs
 
 main_head:
