@@ -162,7 +162,7 @@ ins_loadminusm:
     mul r0, r1, r2
 
     ldr r2, =AC
-    str r1, [r0]
+    str r0, [r2]
 
     pop {r4}
     pop {pc}
