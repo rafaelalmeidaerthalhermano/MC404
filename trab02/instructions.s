@@ -235,9 +235,9 @@ ins_loadmodulusm:
     orr r1, r1, r3
     orr r1, r1, r4
 
-    cmp r1, #0
-    movlt r2, #-1
-    mullt r1, r1, r2
+    @cmp r1, #0
+    @movlt r2, #-1
+    @mullt r1, r1, r2
 
     ldr r2, =AC
     str r1, [r2]
