@@ -21,30 +21,22 @@ PC:
 	.word	0
 
 AC:
-	.word	1
+	.word	0
 
 MQ:
 	.word	0
 
 IAS_MEM:
-	mm_entry 01 02 03 04 05
+	mm_entry 09 00 50 B0 06
+	mm_entry 00 00 00 00 00
+	mm_entry 00 00 00 00 00
+	mm_entry 00 00 00 00 00
+	mm_entry 00 00 00 00 00
+	mm_entry 00 00 00 00 04
+	mm_entry 00 00 00 00 05
+	mm_entry 00 00 00 00 00
 	mm_entry 00 00 00 00 03
-	mm_entry 01 02 03 04 05
-	mm_entry 01 02 03 04 05
-	mm_entry 01 02 03 04 05
-	mm_entry 01 02 03 04 05
-	mm_entry 01 02 03 04 05
-	mm_entry 01 02 03 04 05
-	mm_entry 01 02 03 04 05
-	mm_entry 01 02 03 04 05
-	mm_entry 01 02 03 04 05
-	mm_entry 01 02 03 04 05
-	mm_entry 01 02 03 04 05
-	mm_entry 01 02 03 04 05
-	mm_entry 01 02 03 04 05
-	mm_entry 01 02 03 04 05
-	mm_entry 01 02 03 04 05
-	mm_entry 01 02 03 04 05
-	mm_entry 01 02 03 04 05
-	mm_entry 01 02 03 04 05
-	.fill	1004, 5, 0
+	mm_entry 00 00 00 00 0A
+	mm_entry 00 00 00 00 00
+	mm_entry 00 00 00 00 00
+	.fill	1012, 5, 0

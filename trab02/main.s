@@ -8,13 +8,12 @@
 .extern get_cmd
 .extern put_str
 .extern my_strlen
+.extern step_instruction
 
 .extern IAS_MEM
 .extern PC
 .extern AC
 .extern MQ
-
-.extern ins_jumpmcondright
 
 .globl main
 
@@ -318,11 +317,6 @@ cmd_regs:
 @
 main:
     push {lr}
-
-    bl cmd_regs
-    mov r0, #3
-    bl ins_jumpmcondright
-    bl cmd_regs
 
 main_head:
     ldr r0, =opt1

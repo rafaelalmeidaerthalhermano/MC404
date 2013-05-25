@@ -47,8 +47,155 @@ decode_instruction:
     push {lr}
     push {r4}
 
+decode_instruction_head:
     @ separo o opcode do endereco
+    mov r2, #0b00000000000011111111
+    and r1, r0, r2
+    mov r0, r0, lsr #8
 
+    mov r4, #0b00001010
+    cmp r1, r4
+    beq ins_loadmq
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+    
+    mov r4, #0b00001001
+    cmp r1, r4
+    beq ins_loadmqm
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+    
+    mov r4, #0b00100001
+    cmp r1, r4
+    beq ins_storm
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+    
+    mov r4, #0b00000001
+    cmp r1, r4
+    beq ins_loadm
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+    
+    mov r4, #0b00000010
+    cmp r1, r4
+    beq ins_loadminusm
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+    
+    mov r4, #0b00000011
+    cmp r1, r4
+    beq ins_loadmodulusm
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+    
+    mov r4, #0b00001101
+    cmp r1, r4
+    beq ins_jumpmleft
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+    
+    mov r4, #0b00001110
+    cmp r1, r4
+    beq ins_jumpmright
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+    
+    mov r4, #0b00001111
+    cmp r1, r4
+    beq ins_jumpmcondleft
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+    
+    mov r4, #0b00010000
+    cmp r1, r4
+    beq ins_jumpmcondright
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+    
+    mov r4, #0b00000101
+    cmp r1, r4
+    beq ins_addm
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+    
+    mov r4, #0b00000111
+    cmp r1, r4
+    beq ins_addmodulusm
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+    
+    mov r4, #0b00000110
+    cmp r1, r4
+    beq ins_subm
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+    
+    mov r4, #0b00001000
+    cmp r1, r4
+    beq ins_submodulusm
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+    
+    mov r4, #0b00001011
+    cmp r1, r4
+    beq ins_mulm
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+    
+    mov r4, #0b00001100
+    cmp r1, r4
+    beq ins_divm
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+    
+    mov r4, #0b00010100
+    cmp r1, r4
+    beq ins_lsh
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+    
+    mov r4, #0b00010101
+    cmp r1, r4
+    beq ins_rsh
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+    
+    mov r4, #0b00010010
+    cmp r1, r4
+    beq ins_stormleft
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+    
+    mov r4, #0b00010011
+    cmp r1, r4
+    beq ins_stormright
+    cmp r1, r4
+    moveq r0, #0
+    beq decode_instruction_tail
+
+    mov r0, #1
+
+decode_instruction_tail:
     pop {r4}
     pop {pc}
 
@@ -59,8 +206,8 @@ decode_instruction:
 @
 seek_instruction:
     push {lr}
-    push {r4}
-    mov r4, r0
+
+    mov r3, r0
 
     ldr r0, =PC
     ldr r0, [r0]
@@ -71,12 +218,12 @@ seek_instruction:
     mov r0, r0, lsr #1
 
     @ verifico se a posicao e valida
-    cmp r1, #1024
+    cmp r0, #1024
     movhi r2, #1
-    strhi r2, [r4]
+    strhi r2, [r3]
     bhi seek_instruction_tail
     mov r2, #0
-    str r2, [r4]
+    str r2, [r3]
 
     @ calculo a posicao no IAS_MEM
     mov r2, #5
@@ -121,7 +268,6 @@ seek_instruction_right:
     b seek_instruction_tail
 
 seek_instruction_tail:
-    pop {r4}
     pop {pc}
 
 @ Busca, decodifica e executa a proxima instrucao
@@ -140,6 +286,11 @@ step_instruction:
     cmp r1, #1
     moveq r1, #2
     beq step_instruction_tail
+
+    ldr r1, =PC
+    ldr r0, [r1]
+    add r0, r0, #1
+    str r0, [r1]
 
     bl decode_instruction
 
