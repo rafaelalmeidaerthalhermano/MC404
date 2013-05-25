@@ -289,9 +289,9 @@ step_instruction:
     beq step_instruction_tail
 
     ldr r1, =PC
-    ldr r0, [r1]
-    add r0, r0, #1
-    str r0, [r1]
+    ldr r2, [r1]
+    add r2, r2, #1
+    str r2, [r1]
 
     bl decode_instruction
 
