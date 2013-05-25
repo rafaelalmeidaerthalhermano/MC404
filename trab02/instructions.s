@@ -173,6 +173,36 @@ ins_loadminusm:
 @
 ins_loadmodulusm:
     push {lr}
+
+    @ calculo a posicao no IAS_MEM
+    mov r2, #5
+    mul r3, r2, r0
+    ldr r2, =IAS_MEM
+    add r0, r0, r2
+    add r0, r0, #1
+
+    ldrb r1, [r0], #1
+    mov r1, r1, lsl #24
+
+    ldrb r2, [r0], #1
+    mov r2, r2, lsl #16
+
+    ldrb r3, [r0], #1
+    mov r3, r3, lsl #8
+
+    ldrb r4, [r0], #1
+    mov r4, r4, lsl #0
+
+    orr r1, r1, r2
+    orr r1, r1, r3
+    orr r1, r1, r4
+
+    cmp r1, #0
+    movlt r2, #-1
+    mullt r1, r1, r2
+
+    ldr r2, =AC
+    str r1, [r2]
     
     pop {pc}
 

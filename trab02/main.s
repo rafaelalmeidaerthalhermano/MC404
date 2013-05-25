@@ -9,10 +9,7 @@
 .extern put_str
 .extern my_strlen
 
-.extern ins_loadmqm
-.extern ins_loadmq
-.extern ins_loadm
-.extern ins_loadminusm
+.extern ins_loadmodulusm
 
 .extern IAS_MEM
 .extern PC
@@ -327,7 +324,7 @@ main:
     bl cmd_regs
 
     mov r0, #0
-    bl ins_loadminusm
+    bl ins_loadmodulusm
     bl cmd_regs
 
 main_head:
