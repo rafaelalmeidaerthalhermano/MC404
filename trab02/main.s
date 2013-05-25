@@ -324,7 +324,7 @@ main:
     bl cmd_regs
 
     mov r0, #0
-    bl ins_loadmqm
+    bl ins_loadmq
     bl cmd_regs
 
 main_head:
