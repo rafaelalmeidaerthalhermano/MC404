@@ -10,6 +10,9 @@
 .extern my_strlen
 
 .extern ins_loadmqm
+.extern ins_loadmq
+.extern ins_loadm
+.extern ins_loadminusm
 
 .extern IAS_MEM
 .extern PC
@@ -320,11 +323,11 @@ main:
     push {lr}
 
     mov r0, #0
-    bl ins_loadmqm
+    bl ins_loadm
     bl cmd_regs
 
     mov r0, #0
-    bl ins_loadmq
+    bl ins_loadminusm
     bl cmd_regs
 
 main_head:
