@@ -329,7 +329,7 @@ main:
     mov r0, #0
     bl ins_loadm
 
-    bl regs
+    bl cmd_regs
 
 main_head:
     ldr r0, =opt1
