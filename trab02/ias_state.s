@@ -21,7 +21,7 @@ PC:
 	.word	0
 
 AC:
-	.word	1
+	.word	10
 
 MQ:
 	.word	0
