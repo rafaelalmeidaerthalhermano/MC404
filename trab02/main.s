@@ -320,10 +320,6 @@ main:
     push {lr}
 
     mov r0, #0
-    bl ins_loadm
-    bl cmd_regs
-
-    mov r0, #0
     bl ins_loadmodulusm
     bl cmd_regs
 
