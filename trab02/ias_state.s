@@ -18,7 +18,7 @@
 	.globl MQ
 
 PC:
-	.word	0
+	.word	-1
 
 AC:
 	.word	11

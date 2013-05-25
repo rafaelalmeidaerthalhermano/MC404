@@ -14,7 +14,7 @@
 .extern AC
 .extern MQ
 
-.extern ins_jumpmright
+.extern ins_jumpmcondleft
 
 .globl main
 
@@ -320,7 +320,7 @@ main:
     push {lr}
 
     mov r0, #3
-    bl ins_jumpmright
+    bl ins_jumpmcondleft
     bl cmd_regs
 
 main_head:

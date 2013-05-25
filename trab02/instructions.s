@@ -284,6 +284,12 @@ ins_jumpmright:
 ins_jumpmcondleft:
     push {lr}
 
+    ldr r1, =AC
+    ldr r1, [r1]
+
+    cmp r1, #0
+    blge ins_jumpmleft
+
     pop {pc}
 
 @ Se o valor em AC ffor não negativo, salta para a instrução da direita na
