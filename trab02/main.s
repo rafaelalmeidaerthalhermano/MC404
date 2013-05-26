@@ -352,7 +352,7 @@ main_head:
     cmp r4, #2
     bleq cmd_sn
     cmp r4, #2
-    bl check_cmd
+    bleq check_cmd
     bleq main_head
 
     cmp r4, #3
