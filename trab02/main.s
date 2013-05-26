@@ -345,8 +345,8 @@ main_head:
 
     cmp r4, #1
     bleq cmd_si
-    @cmp r0, #0
-    @bne main_tail
+    cmpeq r0, #0
+    bne main_tail
     cmp r4, #1
     bleq main_head
 
