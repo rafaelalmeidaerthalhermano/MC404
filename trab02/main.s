@@ -345,15 +345,13 @@ main_head:
 
     cmp r4, #1
     bleq cmd_si
-    cmpeq r0, #0
-    bne main_tail
+    bl check_cmd
     cmp r4, #1
     bleq main_head
 
     cmp r4, #2
     bleq cmd_sn
-    @cmp r0, #0
-    @bne main_tail
+    bl check_cmd
     cmp r4, #2
     bleq main_head
 
@@ -374,6 +372,10 @@ main_head:
     bleq cmd_regs
     cmp r4, #6
     bleq main_head
+
+check_cmd:
+    cmp r0, #0
+    moveq pc, lr
 
 main_tail:
     mov r0, #0
