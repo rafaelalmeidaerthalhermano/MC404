@@ -345,17 +345,20 @@ main_head:
 
     cmp r4, #1
     bleq cmd_si
-    cmp r0, #0
-    bne main_tail
+    @cmp r0, #0
+    @bne main_tail
     cmp r4, #1
     bleq main_head
 
     cmp r4, #2
     bleq cmd_sn
-    cmp r0, #0
-    bne main_tail
+    @cmp r0, #0
+    @bne main_tail
     cmp r4, #2
     bleq main_head
+
+    cmp r4, #3
+    bleq cmd_c
 
     cmp r4, #4
     bleq cmd_stw
