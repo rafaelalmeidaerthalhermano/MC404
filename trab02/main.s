@@ -373,6 +373,8 @@ main_head:
     cmp r4, #6
     bleq main_head
 
+    b main_tail
+
 check_cmd:
     cmp r0, #0
     moveq pc, lr
