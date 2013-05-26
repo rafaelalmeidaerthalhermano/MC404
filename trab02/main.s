@@ -357,9 +357,6 @@ main_head:
     cmp r4, #2
     bleq main_head
 
-    cmp r4, #3
-    bleq cmd_c
-
     cmp r4, #4
     bleq cmd_stw
     cmp r4, #4
