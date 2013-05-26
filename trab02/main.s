@@ -345,14 +345,14 @@ main_head:
 
     cmp r4, #1
     bleq cmd_si
-    bl check_cmd
     cmp r4, #1
+    bleq check_cmd
     bleq main_head
 
     cmp r4, #2
     bleq cmd_sn
-    bl check_cmd
     cmp r4, #2
+    bl check_cmd
     bleq main_head
 
     cmp r4, #3
