@@ -51,6 +51,7 @@ cmd_si:
 @
 cmd_sn:
     push {lr}
+    push {r4}
 
     ldr r0, =opt1
     ldrb r1, [r0, #1]
@@ -62,17 +63,34 @@ cmd_sn:
     bleq my_ahtoi
     blne my_atoi
 
+    mov r4, r0
+
 cmd_sn_head:
-    cmp r0, #0
+    cmp r4, #0
     bls cmd_sn_tail
 
-    push {r0-r4}
     bl step_instruction
-    pop {r0-r4}
-    sub r0, r0, #1
+    cmp r0, #0
+    bne cmd_sn_tail
+    sub r4, r4, #1
     b cmd_sn_head
 
 cmd_sn_tail:
+    pop {r4}
+    pop {pc}
+
+@ Interpreta um comando c
+@
+cmd_c:
+    push {lr}
+
+cmd_c_head:
+    bl step_instruction
+    cmp r0, #0
+    bne cmd_c_tail
+    b cmd_c_head
+
+cmd_c_tail:
     pop {pc}
 
 @ Interpreta um comando stw
@@ -327,13 +345,20 @@ main_head:
 
     cmp r4, #1
     bleq cmd_si
+    cmp r0, #0
+    bne main_tail
     cmp r4, #1
     bleq main_head
 
     cmp r4, #2
     bleq cmd_sn
+    cmp r0, #0
+    bne main_tail
     cmp r4, #2
     bleq main_head
+
+    cmp r4, #3
+    bleq cmd_c
 
     cmp r4, #4
     bleq cmd_stw

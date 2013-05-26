@@ -516,22 +516,109 @@ ins_rsh:
 
     pop {pc}
 
-@ Move os 12 bits mais significativos de ac para o segmento de endereço na
+@ Move os 12 bits menos significativos de ac para o segmento de endereço na
 @ posição à esquerda do endereço m
 @
 @ entrada   : {r0: endereço m}
 @
 ins_stormleft:
     push {lr}
+    push {r4}
 
+    mov r4, r0
+
+    ldr r1, =AC
+    ldr r1, [r1]
+    ldr r2, =0b00000000111111111111
+    and r1, r1, r2
+    mov r1, r1, lsl #20
+    push {r1}
+
+    bl ins_loadm
+    ldr r1, =AC
+    ldr r1, [r1]
+    ldr r2, =0b00000000000011111111111111111111
+    and r1, r1, r2
+    pop {r2}
+
+    orr r1, r1, r2
+    mov r0, r4
+
+    @ insiro o segundo byte
+    mov r2, #0xff000000
+    and r2, r1, r2
+    mov r2, r2, lsr #24
+    strb r2, [r0], #1
+
+    @ insiro o terceiro byte
+    mov r2, #0x00ff0000
+    and r2, r1, r2
+    mov r2, r2, lsr #16
+    strb r2, [r0], #1
+
+    @ insiro o quarto byte
+    mov r2, #0x0000ff00
+    and r2, r1, r2
+    mov r2, r2, lsr #8
+    strb r2, [r0], #1
+
+    @ insiro o quinto byte
+    mov r2, #0x000000ff
+    and r2, r1, r2
+    strb r2, [r0]
+
+    pop {r4}
     pop {pc}
 
-@ Move os 12 bits mais significativos de ac para o segmento de endereço na
+@ Move os 12 bits menos significativos de ac para o segmento de endereço na
 @ posição à direita do endereço m 
 @
 @ entrada   : {r0: endereço m}
 @
 ins_stormright:
     push {lr}
+    push {r4}
 
+    mov r4, r0
+
+    ldr r1, =AC
+    ldr r1, [r1]
+    ldr r2, =0b00000000111111111111
+    and r1, r1, r2
+    push {r1}
+
+    bl ins_loadm
+    ldr r1, =AC
+    ldr r1, [r1]
+    ldr r2, =0b11111111111111111111000000000000
+    and r1, r1, r2
+    pop {r2}
+
+    orr r1, r1, r2
+    mov r0, r4
+
+    @ insiro o segundo byte
+    mov r2, #0xff000000
+    and r2, r1, r2
+    mov r2, r2, lsr #24
+    strb r2, [r0], #1
+
+    @ insiro o terceiro byte
+    mov r2, #0x00ff0000
+    and r2, r1, r2
+    mov r2, r2, lsr #16
+    strb r2, [r0], #1
+
+    @ insiro o quarto byte
+    mov r2, #0x0000ff00
+    and r2, r1, r2
+    mov r2, r2, lsr #8
+    strb r2, [r0], #1
+
+    @ insiro o quinto byte
+    mov r2, #0x000000ff
+    and r2, r1, r2
+    strb r2, [r0]
+
+    pop {r4}
     pop {pc}
