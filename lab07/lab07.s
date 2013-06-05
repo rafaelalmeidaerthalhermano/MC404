@@ -1,12 +1,3 @@
-@ Constantes para os endereços do TZIC
-	@ (não são instruções, são diretivas do montador!)
-	.set TZIC_BASE, 0x0FFFC000
-	.set TZIC_INTCTRL, 0x0
-	.set TZIC_INTSEC1, 0x84 
-	.set TZIC_ENSET1, 0x104
-	.set TZIC_PRIOMASK, 0xC
-	.set TZIC_PRIORITY9, 0x424
-
 .text
 .align 4
 
@@ -14,30 +5,50 @@
 b start_system
 
 .org 0x18
-bl tzic_trap
-
-.org 0xD000
-clock: .word 0x0
+b tzic_trap
 
 tzic_trap:
-	mov GPT_SR, #0x1
-	push {r0}
-	push {r1}
+	mov r0, #0x53FA0008
+	mov r1, #0x1
+	str r1, [r0]
 
 	ldr r0, =clock
 	ldr r1, [r0]
 	add r1, r1, #1
 	str r1, [r0]
 
-	pop {r1}
-	pop {r0}
 	sub lr, lr, #4
 	movs pc, lr
 
 start_system:
-	msr CPSR_c, #0x13
 	
-	mov GPT_CR, #0x00000041
+	@GPT_CR := 0X41
+	mov r0, #0x53FA0000
+	mov r1, #0x00000041
+	str r1, [r0]
+
+	@GPT_PR := 0X0
+	mov r0, #0x53FA0004
+	mov r1, #100
+	str r1, [r0]
+
+	@GPT_OCR1 := 0X100
+	mov r0, #0x53FA0010
+	mov r1, #100
+	str r1, [r0]
+
+	@GPT_IR := 0X1
+	mov r0, #0x53FA000C
+	mov r1, #0x00000001
+	str r1, [r0]
+
+	@ Constantes para os endereços do TZIC
+	.set TZIC_BASE, 0x0FFFC000
+	.set TZIC_INTCTRL, 0x0
+	.set TZIC_INTSEC1, 0x84 
+	.set TZIC_ENSET1, 0x104
+	.set TZIC_PRIOMASK, 0xC
+	.set TZIC_PRIORITY9, 0x424
 
 	@ Liga o controlador de interrupções
 	ldr	r1, =TZIC_BASE
@@ -59,3 +70,8 @@ start_system:
 	@ Habilita o controlador de interrupções
 	mov	r0, #1
 	str	r0, [r1, #TZIC_INTCTRL]
+
+	msr CPSR_c, #0x13
+
+.org 0xD000
+clock: .word 0x0
