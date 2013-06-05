@@ -35,8 +35,9 @@ reset:
     msr     CPSR_c, #0x12    @ IRQ mode, vou setar uma pilha
     ldr sp, =0xffff          @ endereco onde colocarei minha pilha 
 
-    bl gpt_setup
     bl tzic_setup
+    bl gpt_setup
+    bl uart_setup
 
     msr CPSR_c, #0x13        @ SUPERVISOR mode, IRQ/FIQ enabled habilita interrupcoes
 
