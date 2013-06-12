@@ -32,19 +32,99 @@ b irq_trap
 @ os processos que serão executados pelo sistema operacional
 @
 reset:
-    msr     CPSR_c, #0x12    @ IRQ mode, vou setar uma pilha
-    ldr sp, =0xffff          @ endereco onde colocarei minha pilha 
+    @ Configurable STACK values for each ARM core operation mode
+    .set USR_STACK, 0x11000
+    .set SVC_STACK, 0x10800
+    .set UND_STACK, 0x07c00
+    .set ABT_STACK, 0x07800
+    .set FIQ_STACK, 0x07400
+    .set IRQ_STACK, 0x07000
 
+    @ First configure stacks for all modes
+    mov sp, #SVC_STACK 
+    msr CPSR_c, #0xDF   @ Entrar no modo sistema, FIQ/IRQ disabilitados
+    mov sp, #USR_STACK
+    msr CPSR_c, #0xD1   @ Entrar no modo fiq, FIQ/IRQ disabilitados
+    mov sp, #FIQ_STACK
+    msr CPSR_c, #0xD2   @ Entrar no modo irq, FIQ/IRQ disabilitados
+    mov sp, #IRQ_STACK
+    msr CPSR_c, #0xD7   @ Entrar no modo abort, FIQ/IRQ disabilitados
+    mov sp, #ABT_STACK
+    msr CPSR_c, #0xDB   @ Entrar no modo undefined, FIQ/IRQ disabilitados
+    mov sp, #UND_STACK
+
+    msr CPSR_c, #0xDF   @ Entrar no modo sistema e desabilitar interrupções para setup
     bl tzic_setup
     bl gpt_setup
     bl uart_setup
 
-    msr CPSR_c, #0x13        @ SUPERVISOR mode, IRQ/FIQ enabled habilita interrupcoes
+    
+    .set UART1_USR1, 0x53FBC094
+    .set UART1_UTXD, 0x53FBC040
+    .set TRDY_MASK, 0b01000000000000
+
+write_head:
+    @ verifico trdy 
+    ldr r0, =UART1_USR1
+    ldr r0, [r0]     @ carregando o endereco do UART1_USR1
+
+    ldr r1, =TRDY_MASK
+    ldr r1, [r1]     @ carregando o endereco do mascara do trdy
+
+    and r0, r0, r1   @ aplico a mascara
+    cmp r0, r1
+    bne write_head
+
+    ldr r0, =UART1_UTXD       @ carregando o endereco do UART1_UTXD
+    mov r1, #0x1              @ valor a ser escrito
+    strb r1, [r0]             @ escrevo
+
+write_tail:
+    loop:
+    b loop
+
+    msr CPSR_c, #0x13   @ Entrar no modo sistema e habilitar interrupções
 
 @ Configuro a uart para realizar entrada e saida serial no sistema operacional
 @
 uart_setup:
     push {lr}
+
+    .set UCR1,       0x53FBC080
+    .set UCR2,       0x53FBC084
+    .set UCR3,       0x53FBC088
+    .set UCR4,       0x53FBC08C
+    .set UFCR,       0x53FBC090
+    .set UBIR,       0x53FBC0A4
+    .set UBMR,       0x53FBC0A8
+
+    ldr r0, =UCR1            @ carregando o endereco do UCR1
+    mov r1, #0x00000001      @ configurando o UCR1
+    str r1, [r0]             @ guardo
+
+    ldr r0, =UCR2            @ carregando o endereco do UCR2
+    mov r1, #0x00002127      @ configurando o UCR2
+    str r1, [r0]             @ guardo
+
+    ldr r0, =UCR3            @ carregando o endereco do UCR2
+    mov r1, #0x00000704      @ configurando o UCR3
+    str r1, [r0]             @ guardo
+
+    ldr r0, =UCR4            @ carregando o endereco do UCR4
+    mov r1, #0x00007C00      @ configurando o UCR4
+    str r1, [r0]             @ guardo
+
+    ldr r0, =UFCR            @ carregando o endereco do UFCR
+    mov r1, #0x0000089E      @ configurando o UFCR
+    str r1, [r0]             @ guardo
+
+    ldr r0, =UBIR            @ carregando o endereco do UBIR
+    mov r1, #0x000008FF      @ configurando o UBIR
+    str r1, [r0]             @ guardo
+
+    ldr r0, =UBMR            @ carregando o endereco do UBMR
+    mov r1, #0x00000C34      @ configurando o UBMR
+    str r1, [r0]             @ guardo
 
     pop {pc}
 
@@ -54,8 +134,6 @@ uart_setup:
 tzic_setup:
     push {lr}
 
-    @ Constantes para os endereços do TZIC
-    @ (não são instruções, são diretivas do montador!)
     .set TZIC_BASE, 0x0FFFC000
     .set TZIC_INTCTRL, 0x0
     .set TZIC_INTSEC1, 0x84 
@@ -64,7 +142,6 @@ tzic_setup:
     .set TZIC_PRIORITY9, 0x424
 
     @ Liga o controlador de interrupções
-    @ R1 <= TZIC_BASE
     ldr r1, =TZIC_BASE
 
     @ Configura interrupção 39 do GPT como não segura
@@ -72,12 +149,10 @@ tzic_setup:
     str r0, [r1, #TZIC_INTSEC1]
 
     @ Habilita interrupção 39 (GPT)
-    @ reg1 bit 7 (gpt)
     mov r0, #(1 << 7)
     str r0, [r1, #TZIC_ENSET1]
 
     @ Configure interrupt39 priority as 1
-    @ reg9, byte 3
     ldr r0, [r1, #TZIC_PRIORITY9]
     bic r0, r0, #0xFF000000
     mov r2, #1
