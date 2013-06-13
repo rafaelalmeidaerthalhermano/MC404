@@ -7,6 +7,12 @@
 @ alunos : 116330 Bruno Vargas Versignassi de Carvalho &
 @          121286 Rafael Almeida Erthal Hermano
 
+.data
+    TEST: .asciz "abcde"
+
+.text
+.align 4
+
 .org 0x0
 b reset
 
@@ -58,28 +64,10 @@ reset:
     bl gpt_setup
     bl uart_setup
 
-    
-    .set UART1_USR1, 0x53FBC094
-    .set UART1_UTXD, 0x53FBC040
-    .set TRDY_MASK, 0b01000000000000
+    ldr r0, =TEST
+    mov r1, #5
+    bl write
 
-write_head:
-    @ verifico trdy 
-    ldr r0, =UART1_USR1
-    ldr r0, [r0]     @ carregando o endereco do UART1_USR1
-
-    ldr r1, =TRDY_MASK
-    ldr r1, [r1]     @ carregando o endereco do mascara do trdy
-
-    and r0, r0, r1   @ aplico a mascara
-    cmp r0, r1
-    bne write_head
-
-    ldr r0, =UART1_UTXD       @ carregando o endereco do UART1_UTXD
-    mov r1, #0x1              @ valor a ser escrito
-    strb r1, [r0]             @ escrevo
-
-write_tail:
     loop:
     b loop
 
@@ -91,39 +79,46 @@ uart_setup:
     push {lr}
 
     .set UCR1,       0x53FBC080
+    .set UCR1_value, 0x00000001
     .set UCR2,       0x53FBC084
+    .set UCR2_value, 0x00002127
     .set UCR3,       0x53FBC088
+    .set UCR3_value, 0x00000704
     .set UCR4,       0x53FBC08C
+    .set UCR4_value, 0x00007C00
     .set UFCR,       0x53FBC090
+    .set UFCR_value, 0x0000089E
     .set UBIR,       0x53FBC0A4
+    .set UBIR_value, 0x000008FF
     .set UBMR,       0x53FBC0A8
+    .set UBMR_value, 0x00000C34
 
     ldr r0, =UCR1            @ carregando o endereco do UCR1
-    mov r1, #0x00000001      @ configurando o UCR1
+    ldr r1, =UCR1_value
     str r1, [r0]             @ guardo
 
     ldr r0, =UCR2            @ carregando o endereco do UCR2
-    mov r1, #0x00002127      @ configurando o UCR2
+    ldr r1, =UCR2_value
     str r1, [r0]             @ guardo
 
     ldr r0, =UCR3            @ carregando o endereco do UCR2
-    mov r1, #0x00000704      @ configurando o UCR3
+    ldr r1, =UCR3_value
     str r1, [r0]             @ guardo
 
     ldr r0, =UCR4            @ carregando o endereco do UCR4
-    mov r1, #0x00007C00      @ configurando o UCR4
+    ldr r1, =UCR4_value
     str r1, [r0]             @ guardo
 
     ldr r0, =UFCR            @ carregando o endereco do UFCR
-    mov r1, #0x0000089E      @ configurando o UFCR
+    ldr r1, =UFCR_value
     str r1, [r0]             @ guardo
 
     ldr r0, =UBIR            @ carregando o endereco do UBIR
-    mov r1, #0x000008FF      @ configurando o UBIR
+    ldr r1, =UBIR_value
     str r1, [r0]             @ guardo
 
     ldr r0, =UBMR            @ carregando o endereco do UBMR
-    mov r1, #0x00000C34      @ configurando o UBMR
+    ldr r1, =UBIR_value
     str r1, [r0]             @ guardo
 
     pop {pc}
@@ -172,14 +167,14 @@ tzic_setup:
 @ Configuro o GPT para interromper a execução de qualquer código de usuário com
 @ uma frequência fixa para escalonar os processos que estão sendo executados
 @
-gtp_setup:
+gpt_setup:
     push {lr}
 
     .set GPT_CR,     0x53FA0000
     .set PRESCALER,  0x53FA0004
     .set GPT_OCR1,   0x53FA0010
     .set GPT_IR,     0x53FA000C
-    .set GPT_CYCLES  0x00010000 @TODO configurar essa bagaça
+    .set GPT_CYCLES, 0x00010000 @TODO configurar essa bagaça
 
     ldr r0, =GPT_CR          @ carregando o endereco do GPT_CR
     mov r1, #0x00000041      @ configurando o GPT  
@@ -190,7 +185,8 @@ gtp_setup:
     str r1, [r0]
 
     ldr r0, =GPT_OCR1        @ seto o número de ciclos para interrupção dos processos
-    mov r1, GPT_CYCLES
+    ldr r1, =GPT_CYCLES
+    ldr r1, [r1]
     str r1, [r0]
 
     ldr r0, =GPT_IR          @ declarando interece na interrupcao Output Compare Channel 1
@@ -224,12 +220,39 @@ irq_trap:
 @ escritos com sucesso (0 indica que nenhum byte foi escrito) ou -1 caso tenha
 @ ocorrido algum erro.
 @
-@ entrada : {r1: endereco da string, r2: tamanho da string}
+@ entrada : {r0: endereco da string, r1: tamanho da string}
 @ saida   : {r0: bytes escritos}
 @
 write:
     push {lr}
 
+    .set UART1_USR1, 0x53FBC094
+    .set UART1_UTXD, 0x53FBC040
+    .set TRDY_MASK, 0b010000000000000
+
+write_head:
+    cmp r1, #0
+    beq write_tail
+    sub r1, r1, #1
+
+trdy_check:
+    @ verifico trdy 
+    ldr r2, =UART1_USR1
+    ldr r2, [r2]     @ carregando o endereco do UART1_USR1
+    ldr r3, =TRDY_MASK
+
+    and r2, r2, r3   @ aplico a mascara
+    cmp r2, r3
+    bne trdy_check
+
+write_body:
+    ldr r2, =UART1_UTXD       @ carregando o endereco do UART1_UTXD
+    ldrb r3, [r0], #1          @ caracter a ser escrito
+    strb r3, [r2]              @ escrevo
+
+    b write_head
+
+write_tail:
     pop {pc}
 
 @ A chamada de sistema fork() cria um novo processo, duplicando o processo que a
