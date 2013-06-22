@@ -8,7 +8,19 @@
 @          121286 Rafael Almeida Erthal Hermano
 
 .data
-    TEST: .asciz "abcde"
+    @ {r0-r15_usr, cpsr}
+    processes: .fill 17*8*8, 0
+    @ variável global inteira que informa o pid do processo que esta sendo executado
+    running  : .word 2
+    @  rotulos que indicam se os processos p8 p7 p6 p5 p4 p3 p2 p1 estao ativos 0 = inativo 1 = ativo 
+    process01   : .word 1
+    process02   : .word 0
+    process03   : .word 0
+    process04   : .word 0
+    process05   : .word 0
+    process06   : .word 0
+    process07   : .word 0
+    process08   : .word 0
 
 .text
 .align 4
@@ -38,40 +50,54 @@ b irq_trap
 @ os processos que serão executados pelo sistema operacional
 @
 reset:
-    @ Configurable STACK values for each ARM core operation mode
-    .set USR_STACK, 0x11000
-    .set SVC_STACK, 0x10800
+    @ Código de usuario
+    .set user_addr, 0x8000
+
+    @ Pilhas dos modos
+    .set PID1_USR_STACK, 0x11000
+    .set PID2_USR_STACK, 0x10000
+    .set PID3_USR_STACK, 0x0f000
+    .set PID4_USR_STACK, 0x0e000
+    .set PID5_USR_STACK, 0x0d000
+    .set PID6_USR_STACK, 0x0c000
+    .set PID7_USR_STACK, 0x0b000
+    .set PID8_USR_STACK, 0x0a000
+    .set SVC_STACK, 0x09800
     .set UND_STACK, 0x07c00
     .set ABT_STACK, 0x07800
     .set FIQ_STACK, 0x07400
     .set IRQ_STACK, 0x07000
 
-    @ First configure stacks for all modes
-    mov sp, #SVC_STACK 
-    msr CPSR_c, #0xDF   @ Entrar no modo sistema, FIQ/IRQ disabilitados
-    mov sp, #USR_STACK
-    msr CPSR_c, #0xD1   @ Entrar no modo fiq, FIQ/IRQ disabilitados
+    @ pilha do modo fiq
+    msr CPSR_c, #0xD1
     mov sp, #FIQ_STACK
-    msr CPSR_c, #0xD2   @ Entrar no modo irq, FIQ/IRQ disabilitados
+    
+    @ pilha do modo irq
+    msr CPSR_c, #0xD2
     mov sp, #IRQ_STACK
-    msr CPSR_c, #0xD7   @ Entrar no modo abort, FIQ/IRQ disabilitados
+    
+    @ pilha do modo abort
+    msr CPSR_c, #0xD7
     mov sp, #ABT_STACK
-    msr CPSR_c, #0xDB   @ Entrar no modo undefined, FIQ/IRQ disabilitados
+    
+    @ pilha do modo undefined
+    msr CPSR_c, #0xDB
     mov sp, #UND_STACK
 
-    msr CPSR_c, #0xDF   @ Entrar no modo sistema e desabilitar interrupções para setup
+    @ pilha do modo supervisor
+    msr CPSR_c, #0xDF
+    mov sp, #SVC_STACK
+
+    @ Entrar no modo sistema e desabilitar interrupções para setup
     bl tzic_setup
     bl gpt_setup
     bl uart_setup
 
-    ldr r0, =TEST
-    mov r1, #5
-    bl write
+    msr CPSR_c, #0x10
+    mov sp, #PID1_USR_STACK
 
-    loop:
-    b loop
-
-    msr CPSR_c, #0x13   @ Entrar no modo sistema e habilitar interrupções
+    ldr r0, =user_addr
+    bx r0
 
 @ Configuro a uart para realizar entrada e saida serial no sistema operacional
 @
@@ -174,7 +200,7 @@ gpt_setup:
     .set PRESCALER,  0x53FA0004
     .set GPT_OCR1,   0x53FA0010
     .set GPT_IR,     0x53FA000C
-    .set GPT_CYCLES, 0x00010000 @TODO configurar essa bagaça
+    .set GPT_CYCLES, 0x00001000 @TODO configurar essa bagaça
 
     ldr r0, =GPT_CR          @ carregando o endereco do GPT_CR
     mov r1, #0x00000041      @ configurando o GPT  
@@ -198,7 +224,7 @@ gpt_setup:
 @ Função para tratamento de todas as interrupções de software realizadas por 
 @ syscalls chamadas pelo comando svc
 @
-@ entrada : {r0-r3: , r7: código da syscal}
+@ entrada : {r0-r3: , r7: código da syscal[exit: 1, fork: 2, write: 4, getpid: 20]}
 @ saida   : {r0: bytes escritos}
 @
 syscall_trap:
@@ -213,7 +239,101 @@ syscall_trap:
 irq_trap:
     push {lr}
 
+    bl str_context
+    add sp, sp, #4    @descartando o lr anterior
+
+    @ busca proximo processo a ser excutado
+    ldr r0, =running
+    ldr r1, [r0]
+    @ verifico processo ativo
+    str r1, [r0]
+    
+    @ carrego a posicao no vetor de valores
+    ldr r1, [r0]
+    mov r2, #136
+    mul r0, r1, r2
+    ldr r1, =processes
+    add r0, r0, r1
+
+    @carregar o lr e o spsr em irq
+    msr CPSR_c, #0xD2
+    msr spsr, [r0, #64]
+    ldr lr  , [r0, #56]
+    msr CPSR_c, #0xDF
+
+    @ carrego os resgistrados r0-r10 do vetor
+    mov r14, r0
+    ldr r0,  [r14], #4
+    ldr r1,  [r14], #4
+    ldr r2,  [r14], #4
+    ldr r3,  [r14], #4
+    ldr r4,  [r14], #4
+    ldr r5,  [r14], #4
+    ldr r6,  [r14], #4
+    ldr r7,  [r14], #4
+    ldr r8,  [r14], #4
+    ldr r9,  [r14], #4
+    ldr r10, [r14], #4
+    ldr r11, [r14], #4
+    ldr r12, [r14], #4
+    ldr r13, [r14], #4
+    ldr r14, [r14], #4
+
+    msr CPSR_c, #0xD2
+    movs pc, lr
+
+@ Salva o contexto que vai sair de execução, salvo o que estava no lr do
+@ modo original e retorno da função no modo svc
+@
+str_context:
+    push {lr}
+
+    push {r10-r12}
+    @ carrego a posicao no vetor de valores
+    ldr r11, =running
+    ldr r11, [r11]
+    mov r10, #136
+    mul r12, r11, r10
+    ldr r11, =processes
+    add r12, r12, r11
+
+    @ salvo do r0 ao r9 no vetor de processos
+    str r0,  [r12], #4
+    str r1,  [r12], #4
+    str r2,  [r12], #4
+    str r3,  [r12], #4
+    str r4,  [r12], #4
+    str r5,  [r12], #4
+    str r6,  [r12], #4
+    str r7,  [r12], #4
+    str r8,  [r12], #4
+    str r9,  [r12], #4
+
+    @ salvo spsr no vetor de processos
+    mrs spsr, [r12, #6]
+
+    @ salvo o pc que veio de [SP + 16] -4 
+    mov r0, SP
+    add r0, r0, #4
+    ldr r0, [r0]
+    sub r0, r0, #4
+    str r0, [r12, #5]
+    
+    @ salvo r0, r1 e r2 nas posição de r10, r11 e r12 no vetor de processos
+    pop {r0-r2}
+    str r0, [r12], #4
+    str r1, [r12], #4
+    str r2, [r12], #4
+
+    @ vou para o modo sistema
+    msr CPSR_c, #0xDF
+
+    @ salvo r13 e r14 no vetor de processos
+    str r13, [r12], #4
+    str r14, [r12], #4
+
     pop {pc}
+
 
 @ A chamada de sistema write() deve escrever os bytes no dispositivo UART.
 @ Escreva R2 bytes do buffer cujo ponteiro está em R1. Retorne o número de bytes
@@ -252,8 +372,8 @@ write_body:
 
     b write_head
 
-write_tail:
-    pop {pc}
+write_wait:
+    b write_wait
 
 @ A chamada de sistema fork() cria um novo processo, duplicando o processo que a
 @ chamou. O novo processo é referenciado como filho do processo que chamou.
@@ -263,7 +383,83 @@ write_tail:
 fork:
     push {lr}
 
-    pop {pc}
+    ldr r0,=process01
+    ldr r0, [r0] 
+    cmp r0, #0
+    moveq r0, #1
+    bleq str_context
+    msreq CPSR_c, #0x10
+    moveq sp, #PID1_USR_STACK
+    beq fork_wait
+
+    ldr r0,=process02
+    ldr r0, [r0] 
+    cmp r0, #0
+    moveq r0, #2
+    bleq str_context
+    msreq CPSR_c, #0x10
+    moveq sp, #PID2_USR_STACK
+    beq fork_wait
+
+    ldr r0,=process03
+    ldr r0, [r0] 
+    cmp r0, #0
+    moveq r0, #3
+    bleq str_context
+    msreq CPSR_c, #0x10
+    moveq sp, #PID3_USR_STACK
+    beq fork_wait
+
+    ldr r0,=process04
+    ldr r0, [r0] 
+    cmp r0, #0
+    moveq r0, #4
+    bleq str_context
+    msreq CPSR_c, #0x10
+    moveq sp, #PID4_USR_STACK
+    beq fork_wait
+
+    ldr r0,=process05
+    ldr r0, [r0] 
+    cmp r0, #0
+    moveq r0, #5
+    bleq str_context
+    msreq CPSR_c, #0x10
+    moveq sp, #PID5_USR_STACK
+    beq fork_wait
+
+    ldr r0,=process06
+    ldr r0, [r0] 
+    cmp r0, #0
+    moveq r0, #6
+    bleq str_context
+    msreq CPSR_c, #0x10
+    moveq sp, #PID6_USR_STACK
+    beq fork_wait
+
+    ldr r0,=process07
+    ldr r0, [r0] 
+    cmp r0, #0
+    moveq r0, #7
+    bleq str_context
+    msreq CPSR_c, #0x10
+    moveq sp, #PID7_USR_STACK
+    beq fork_wait
+
+    ldr r0,=process08
+    ldr r0, [r0] 
+    cmp r0, #0
+    moveq r0, #8
+    bleq str_context
+    msreq CPSR_c, #0x10
+    moveq sp, #PID8_USR_STACK
+    beq fork_wait
+    
+    mov r0, #-2
+    bl str_context
+
+fork_wait:
+    b fork_wait
 
 @ A syscall getpid() simplesmente retorna a identificação do processo (process
 @ ID) do processo que a chamar. Para responder a essa chamada, basta consultar
@@ -276,12 +472,53 @@ fork:
 getpid:
     push {lr}
 
-    pop {pc}
+    ldr r0, =running
+    ldr r0, [r0]
+    bleq str_context
+
+getpid_wait:
+    b getpid_wait
 
 @ A syscall exit() encerra o processo que a chamar imediatamente. E todo
 @ processo filho do processo que chamou a exit() continua de pé.
 @
 exit:
-    push {lr}
+    ldr r0, =running
+    ldr r0, [r0]
 
-    pop {pc}
+    mov r2, #0
+
+    cmp r0, #1
+    ldreq r1, =process01
+    streq r2, [r1]
+
+    cmp r0, #2
+    ldreq r1, =process02
+    streq r2, [r1]
+
+    cmp r0, #3
+    ldreq r1, =process03
+    streq r2, [r1]
+
+    cmp r0, #4
+    ldreq r1, =process04
+    streq r2, [r1]
+
+    cmp r0, #5
+    ldreq r1, =process05
+    streq r2, [r1]
+
+    cmp r0, #6
+    ldreq r1, =process06
+    streq r2, [r1]
+
+    cmp r0, #7
+    ldreq r1, =process07
+    streq r2, [r1]
+
+    cmp r0, #8
+    ldreq r1, =process08
+    streq r2, [r1]
+
+exit_wait:
+    b exit_wait
